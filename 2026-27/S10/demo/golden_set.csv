@@ -1,0 +1,13 @@
+id,question,source_doc,key_facts,reference_answer
+1,How many days of annual leave do I get per year?,holidays.md,23,"23 working days of paid annual leave per calendar year for full-time employees (HR-POL-03 §3.1); part-time employees receive the proportional amount."
+2,I have been at TelcoNova for 11 years. How many holiday days do I have?,holidays.md,25,"23 days plus 2 seniority days after 10 complete years of service: 25 days (HR-POL-03 §3.2)."
+3,Can I carry unused holiday days over to next year?,holidays.md,5;31 March,"Yes, up to 5 days, and they must be taken before 31 March; after that they are lost and are not paid out (HR-POL-03 §3.3)."
+4,How many days a week can I work from home?,remote_work.md,3;Tuesday,"Up to 3 days per week in eligible roles; Tuesdays are office days for everyone (HR-POL-07 §7.1)."
+5,Can I work from Portugal for a month this summer?,remote_work.md,20;HR,"No. Remote work from abroad is limited to 20 calendar days per year, within the EU or the UK, and needs HR approval 15 days in advance (HR-POL-07 §7.2)."
+6,Does the company pay for my home internet?,remote_work.md,not reimbursed;300,"No. Internet costs are not reimbursed. The company provides laptop, monitor and chair, plus a one-off 300 EUR allowance for other equipment (HR-POL-07 §7.3)."
+7,What is the meal allowance when I travel abroad?,expenses.md,55,"55 EUR per day abroad (35 EUR in Spain), against receipts; alcohol is not reimbursed (HR-POL-11 §11.1)."
+8,Can I take a taxi from the airport at 3 in the afternoon?,expenses.md,public transport;22:00,"Only if public transport is not reasonably available; otherwise taxis are reimbursed only after 22:00 (HR-POL-11 §11.3)."
+9,How long do I have to submit my expense receipts?,expenses.md,30 days,"Within 30 days of the trip; later claims need written approval from the department director (HR-POL-11 §11.2)."
+10,How many weeks of parental leave do I get?,parental_leave.md,16;2,"16 weeks paid at 100% under Spanish law, plus 2 TelcoNova company weeks: 18 in total. The first 6 weeks are taken right after the birth or adoption (HR-POL-05 §5.1–5.2)."
+11,Can I reduce my working hours to look after my child?,parental_leave.md,child is 12;50%;15 days,"Yes: a reduction between 12.5% and 50% until the child is 12, with proportional salary, requested with 15 days' notice (HR-POL-05 §5.4)."
+12,What is the salary band for a senior data analyst?,none,not;HR,"Out of scope: salary bands are not in the HR policies the assistant can see. The correct answer is to say so and refer the employee to HR."

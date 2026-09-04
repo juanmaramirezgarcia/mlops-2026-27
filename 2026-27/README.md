@@ -1,0 +1,27 @@
+# MLOps 2026–27 · Course materials
+
+One folder per session, numbered as in the syllabus (S01–S12). Live sessions carry the deck, the activity brief and the demo; forum sessions carry the forum pack and any asset students need; video sessions (S09, S12) will carry the video deck and the knowledge check.
+
+| Folder | Session | Contents |
+|---|---|---|
+| `S01/` | Live · 3 Oct · Foundations, Personas & Lifecycle | `MLOps_S01_*.pptx` (deck with speaker notes) · `MLOps_S01_Activity_Brief.md` (NorthRetail case) · `MLOps_S01_Demo_Script.md` · `demo/` (script that builds the GitHub demo repo, and a local copy of it) |
+| `S02/` | Forum 1 · 3–9 Oct | `MLOps_S02_Forum1_Pack.md` (opening post, themes, mid-week posts, RACI template, model answers) |
+| `S03/` | Live · 10 Oct · Pipelines, Environments & Security | deck · `MLOps_S03_Activity_Brief.md` (IberBank case) · `MLOps_S03_Demo_Script.md` · `demo/mlflow/` (ready-built MLflow database; `start_mlflow_ui.command` starts the UI, `train_example.command` logs a run live, `rebuild_demo.command` resets; `train_with_mlflow.py` is the annotated training script) |
+| `S04/` | Forum 2 · 10–16 Oct | `MLOps_S04_Forum2_Pack.md` (includes the notebook answer key) · `notebook/` (the messy `churn_exploration` notebook, its PDF rendering and data: post the PDF on campus) |
+| `S05/` | Live · 17 Oct · CI/CD & Deployment | deck (41 slides incl. 7 appendix: package-and-deploy in 36–37, the complete automated pipeline + orchestration in 39–40) · `MLOps_S05_Activity_Brief.md` (IberBank v2 rollout) · `MLOps_S05_Demo_Script.md` (GitHub Actions) · `MLOps_S05_Deploy_Lab_Guide.md` (the optional hands-on + the complete pipeline) · `demo/prepare_s5_demo.sh` (CI demo setup) · `deploy_lab/` (FastAPI + Docker + Cloud Run: `train.py`, `app.py`, `Dockerfile`, `run_local.command`, `deploy_to_cloud_run.md`, and `pipeline.yml` = the complete pipeline automated end to end; modernises last year's Conda-Docker-GCP + Jenkins demos) |
+| `S06/` | Forum 3 · 17–23 Oct | `MLOps_S06_Forum3_Pack.md` (includes the CI/CD flow template) |
+| `S07/` | Live · 24 Oct · Monitoring, XAI & Responsible AI | deck (34 slides + 6 appendix, incl. the Evidently and SHAP/LIME code lines) · `MLOps_S07_Activity_Brief.md` (TelcoNova monitoring plan) · `MLOps_S07_Demo_Script.md` · `demo/` (pre-rendered: `drift_report.html`, `performance_by_segment.png`, `shap_waterfall.png`, `shap_summary.png`, `lime_customer.html/.png`, `lime_text.html/.png`; `s7_demo_setup.py` and `s7_lime_setup.py` regenerate them) |
+| `S08/` | Forum 4 · 24–30 Oct | `MLOps_S08_Forum4_Pack.md` (includes the monitoring plan template) |
+| `S09/` | Video 1 · 24–30 Oct · Monitoring metrics in depth | `MLOps_S09_Video1_*.pptx` (25 slides, 7 segments; the recording script is in the speaker notes) · `MLOps_S09_Video1_Guide_and_Knowledge_Check.md` (segment plan, recording notes incl. the screen-recorded demo, demo-folder table, the 10 questions with answer key) · `demo/` (alerts in production: `alerts.yaml`, `run_alert_checks.py`, `monitoring.yml`, the Evidently report, the Slack-style message and the rendered images; `README.md` explains how to run it) |
+| `S10/` | Live · 31 Oct · LLMOps & Diagnostics | deck (30 slides + 6 case cards + 3 appendix) · `MLOps_S10_Activity_Brief.md` (root-cause template, room allocation, model answers) · `MLOps_S10_Demo_Script.md` · `failure_briefs/` (six one-page briefs + README; post by 28 Oct) · `demo/` (MLflow prompt registry: hr-assistant v1/v2, golden set, judge, evaluation pages; `start_prompt_registry.command` runs it, `README.md` explains it) |
+| `S11/` | Forum 5 · 31 Oct–6 Nov (capstone) | `MLOps_S11_Forum5_Pack.md` (coverage check, opening post, themes incl. "the one control", architecture checklist, model answers) |
+| `S12/` | Video 2 · 31 Oct–6 Nov · AI Governance | `MLOps_S12_Video2_AI_Governance.pptx` (20 slides, 8 segments; recording script in the speaker notes) · `MLOps_S12_Video2_Guide_and_Knowledge_Check.md` (segment plan, the verified EU AI Act timeline with sources, the 10 questions with answer key). Timeline re-verified Sep 2026: Digital Omnibus (in force 27 Jul 2026) moved high-risk to 2 Dec 2027 (Annex III) / 2 Aug 2028 (Annex I); re-check before recording. |
+
+## Conventions
+
+- **Decks** are `.pptx` with speaker notes on every slide; the notes carry the minute marks. About 30 slides per live session, one demo, one chat poll, one breakout of 15 minutes. Appendix slides after the closing trio are marked "not examinable".
+- **Documents** are Markdown (`.md`).
+- **Demos** live in `demo/` inside the session folder, with a click-by-click script (`*_Demo_Script.md`) and a fallback plan.
+- **Naming**: `MLOps_S<nn>_<what>.<ext>`.
+- The course plan, the syllabus and the production calendar are in `../00_Plan_and_Syllabus/`. Last year's decks are in `../2025-26_previous_edition/`.
+- Anything in a `_to_delete/` folder is scrap from a failed step and can be deleted.

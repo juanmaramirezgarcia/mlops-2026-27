@@ -1,0 +1,12 @@
+MONITORING RUN  ·  churn-model v1.1  ·  2026-09-01 15:49  ·  reference: June extract
+------------------------------------------------------------------------------------------------
+  PASS  missing-features     Actual value 0.000 < 0.050                    threshold > 5%
+  PASS  accuracy-overall     accuracy 0.80                                 threshold < 0.75
+  PASS  batch-late           finished 05:42                                threshold after 06:00 on day 1
+  FIRE  drifted-features     Actual value 3.000 >= 2.000                   threshold > 2 of 7 features   [trend]
+  FIRE  charges-mean-shift   Actual value 76.511 >= 70.000                 threshold > 70 EUR (reference 62)   [trend]
+  FIRE  prediction-drift     Actual value 0.116 >= 0.100                   threshold drift score >= 0.10   [trend]
+  FIRE  accuracy-segment     1 segment < 0.70: North, tenure 3y+: 0.65 (n=349) threshold < 0.70 in any segment with > 200 customers   [trend]
+  FIRE  latency-p95          p95 659 ms over the last 10 minutes           threshold > 500 ms for 10 minutes   [incident]
+------------------------------------------------------------------------------------------------
+  5 rule(s) fired (1 incident, 4 trend); 3 passed. Report: alert_checks.html

@@ -1,0 +1,45 @@
+# ==========================================================================
+# MLOps 2026-27 course materials — .gitignore
+# Keep: decks (.pptx), documents (.md/.docx), pre-rendered demo assets
+#       (.csv, .png, .html, small .pkl), scripts, launchers.
+# Ignore: heavy or machine-generated state that any committed script rebuilds.
+# ==========================================================================
+
+# --- Python virtual environments (huge; rebuilt by the *.command launchers) ---
+.venv/
+**/.venv/
+venv/
+env/
+
+# --- MLflow generated state (rebuilt by the demo setup scripts) ---
+**/mlruns/
+**/mlflow.db
+**/mlflow.db-journal
+
+# --- Python caches / test caches ---
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- macOS / editor cruft ---
+.DS_Store
+**/.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# --- scrap moved aside during editing (safe to delete) ---
+**/_to_delete/
+
+# --- the Session 1 demo is its own GitHub repo; do not nest it here ---
+2026-27/S01/demo/mlops-demo-churn/
+
+# --- local cloud/secret material (should never be committed) ---
+*.pem
+*.key
+*_key.json
+credentials*.json
+sa-*.json
+.env

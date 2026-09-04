@@ -1,0 +1,31 @@
+# .github/workflows/monitoring.yml  -  the scheduler that runs the monitoring job
+# (GitHub Actions used here because students saw it in Session 5; cron, Airflow or a
+#  cloud scheduler do the same job).
+name: monitoring
+on:
+  schedule:
+    - cron: "0 6 * * 1"        # every Monday 06:00 UTC: weekly drift checks
+    - cron: "0 7 2 * *"        # 2nd of each month 07:00: labels have arrived, performance checks
+  workflow_dispatch:           # and on demand, when someone wants to look now
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - name: Pull this month's data and predictions
+        run: python fetch_current.py            # from the warehouse and the prediction log
+      - name: Evaluate the alert rules
+        id: rules
+        run: python run_alert_checks.py         # exit code 1 if any rule fired
+      - name: Send the alert message
+        if: failure()                           # only when a rule fired
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+               --data "$(python -c 'import json;print(json.dumps({"text": open("alert_message.md").read()}))')" \
+               "${{ secrets.SLACK_WEBHOOK_CHURN_ALERTS }}"
+      - name: Keep the report
+        uses: actions/upload-artifact@v4
+        with: { name: alert_checks, path: alert_checks.html }

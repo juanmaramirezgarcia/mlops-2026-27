@@ -1,0 +1,85 @@
+# pipeline.yml  -  the COMPLETE MLOps pipeline, automated end to end, in one file.
+#
+# In a real repository this lives at .github/workflows/pipeline.yml. It is the modern equivalent of last
+# year's Jenkins trigger demo: a trigger starts it, and it runs the whole pipeline by itself — test the
+# code, validate the data, train and evaluate the model, then build the container and deploy it to the
+# cloud. No one clicks "run".
+#
+# It maps onto Session 5's "stage by stage" slide:
+#   trigger  ->  Pipeline CI (test + validate)  ->  Continuous Training (train)  ->  Model CD (build + deploy)
+#
+# WHAT MAKES IT COMPLETE (vs the Session 5 live demo, which stops after "validate + train"):
+#   - it has a DEPLOY job (Continuous Delivery), not just tests;
+#   - it has THREE triggers, including a SCHEDULE (Continuous Training) and a manual button.
+#
+# To make the deploy step actually run you add two GitHub repository secrets (see the guide,
+# MLOps_S05_Deploy_Lab_Guide.md, section "The complete pipeline"). Without them the deploy job is skipped,
+# so the file is safe to commit as-is and the CI half runs for anyone.
+
+name: mlops-pipeline
+
+# ---------------------------------------------------------------- 1. the triggers (what starts a run)
+on:
+  push:
+    branches: [main]          # a push: someone changed the code or the data
+  schedule:
+    - cron: "0 3 * * 1"       # a schedule: every Monday 03:00 UTC -> continuous training on fresh data
+  workflow_dispatch: {}       # a button: run it on demand from the Actions tab
+
+jobs:
+
+  # -------------------------------------------------------------- 2. Pipeline CI + Continuous Training
+  test-train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Train the model (continuous training)
+        run: python train.py                     # produces churn_model.pkl from the latest data
+
+      - name: Tests on the API (does it still behave?)
+        run: python -m pytest -q test_api.py      # the CI gate: if a test fails, the run stops red here
+
+      - name: Keep the trained model as an artefact
+        uses: actions/upload-artifact@v4
+        with: { name: churn_model, path: churn_model.pkl }
+
+  # -------------------------------------------------------------- 3. Model CD: build the container, deploy it
+  deploy:
+    needs: test-train                             # only if the CI + training job passed
+    runs-on: ubuntu-latest
+    # Only deploy from main, and only when the GCP secret is configured (otherwise this job is skipped).
+    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rebuild the model for the image
+        run: |
+          python -m pip install -r requirements.txt
+          python train.py
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}   # a service-account key, stored as a repo secret
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy to Cloud Run (Model CD)
+        run: |
+          gcloud run deploy churn-api \
+            --source . \
+            --region europe-west1 \
+            --allow-unauthenticated \
+            --quiet
+
+      # The pipeline now ends in a live, updated prediction service. Monitoring (Session 7, Video 1)
+      # watches it and can raise the next trigger, closing the loop.

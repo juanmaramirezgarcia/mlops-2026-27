@@ -1,0 +1,79 @@
+# alerts.yaml  -  monitoring rules for the TelcoNova churn model (Video 1 demo)
+#
+# One rule = metric + threshold + window + route + action.
+# A rule without a route and an action is a chart, not a control.
+# "severity: incident" rules page a person immediately; "trend" rules go to a channel.
+
+model: churn-model v1.1
+reference: training extract 2026-06-01 (June)
+owner: Customer Retention (accountable) · ML engineer, Data Platform (responsible)
+
+rules:
+
+  # ---------------------------------------------------------------- data drift (no labels needed; weekly)
+  - id: drifted-features
+    metric: number of input features whose distribution drifted vs reference
+    threshold: "> 2 of 7 features"
+    window: weekly, two consecutive weeks
+    severity: trend
+    route: "#churn-model-alerts (Slack), ML engineer"
+    action: check the extract with the data team; if confirmed, retrain on recent data
+
+  - id: charges-mean-shift
+    metric: mean monthly_charges vs reference
+    threshold: "> 70 EUR (reference 62)"
+    window: weekly
+    severity: trend
+    route: "#churn-model-alerts, ML engineer; copy Product owner"
+    action: ask the business what changed (pricing?); do not retrain until answered
+
+  - id: missing-features
+    metric: share of customers with tenure_months missing
+    threshold: "> 5%"
+    window: every batch
+    severity: incident
+    route: page the on-call ML engineer
+    action: hold the call list; check the upstream extract (the NorthRetail bug)
+
+  # ---------------------------------------------------------------- prediction drift (the earliest warning)
+  - id: prediction-drift
+    metric: drift of the predicted risk distribution vs reference
+    threshold: "drift score >= 0.10"
+    window: weekly
+    severity: trend
+    route: "#churn-model-alerts, ML engineer"
+    action: compare by segment; investigate before labels arrive
+
+  # ---------------------------------------------------------------- performance (labels arrive 30 days later; monthly)
+  - id: accuracy-overall
+    metric: accuracy on the month's labelled sample
+    threshold: "< 0.75"
+    window: monthly, when labels arrive
+    severity: trend
+    route: ML engineer + Product owner
+    action: retrain with new labels; Product owner approves the new version
+
+  - id: accuracy-segment
+    metric: accuracy on the month's labels, per region x tenure band
+    threshold: "< 0.70 in any segment with > 200 customers"
+    window: monthly, when labels arrive
+    severity: trend
+    route: ML engineer + Product owner
+    action: retrain with new labels; consider region interactions; approve
+
+  # ---------------------------------------------------------------- operational (every batch / real time)
+  - id: batch-late
+    metric: time the monthly scoring batch finished
+    threshold: "after 06:00 on day 1"
+    window: every batch
+    severity: incident
+    route: page IT on call
+    action: the retention team cannot start; treat as an outage
+
+  - id: latency-p95
+    metric: p95 scoring latency (online endpoint)
+    threshold: "> 500 ms for 10 minutes"
+    window: continuous
+    severity: incident
+    route: page IT on call
+    action: roll back if it followed a deployment
