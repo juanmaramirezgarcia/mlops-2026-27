@@ -4,7 +4,7 @@ One folder per session, numbered as in the syllabus (S01–S12). Live sessions c
 
 | Folder | Session | Contents |
 |---|---|---|
-| `S01/` | Live · 3 Oct · Foundations, Personas & Lifecycle | `MLOps_S01_*.pptx` (deck with speaker notes) · `MLOps_S01_Activity_Brief.md` (NorthRetail case) · `MLOps_S01_Demo_Script.md` · `demo/` (script that builds the GitHub demo repo, and a local copy of it) |
+| `S01/` | Live · 3 Oct · Foundations, Personas & Lifecycle | `MLOps_S01_*.pptx` (deck with speaker notes) · `MLOps_S01_Activity_Brief.md` (NorthRetail case) · `MLOps_S01_Demo_Script.md` · `MLOps_S01_Presenter_Guide.md` (slide-by-slide delivery guide for a non-technical cohort) · `demo/` (script that builds the GitHub demo repo, and a local copy of it) |
 | `S02/` | Forum 1 · 3–9 Oct | `MLOps_S02_Forum1_Pack.md` (opening post, themes, mid-week posts, RACI template, model answers) |
 | `S03/` | Live · 10 Oct · Pipelines, Environments & Security | deck · `MLOps_S03_Activity_Brief.md` (IberBank case) · `MLOps_S03_Demo_Script.md` · `demo/mlflow/` (ready-built MLflow database; `start_mlflow_ui.command` starts the UI, `train_example.command` logs a run live, `rebuild_demo.command` resets; `train_with_mlflow.py` is the annotated training script) |
 | `S04/` | Forum 2 · 10–16 Oct | `MLOps_S04_Forum2_Pack.md` (includes the notebook answer key) · `notebook/` (the messy `churn_exploration` notebook, its PDF rendering and data: post the PDF on campus) |
