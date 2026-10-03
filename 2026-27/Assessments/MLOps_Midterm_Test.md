@@ -1,6 +1,6 @@
 # MLOps · Midterm Test
 
-**Master in Business Analytics and Big Data — MLOps elective (2026–27)**
+**Master in Business Analytics and Data Science — MLOps elective (2026–27)**
 
 Coverage: Sessions 1–6 (Foundations, personas & lifecycle; ML pipelines, environments & security; CI/CD & deployment strategies).
 Format: 15 multiple-choice questions. Each has four options and **exactly one** correct answer.

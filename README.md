@@ -1,4 +1,4 @@
-# MLOps — Master in Business Analytics and Big Data (Part-Time) · 2026–27
+# MLOps — Master in Business Analytics and Data Science (Part-Time) · MBDS-PT2026F · 2026–27
 
 Course materials for *MLOps: Machine Learning Operations*, IE School of Science & Technology.
 Five live sessions, five discussion forums, and two self-paced video lessons, plus their demos, activities and knowledge checks.

@@ -1,6 +1,6 @@
 # MLOps · Module Concept-Check Quizzes
 
-**Master in Business Analytics and Big Data — MLOps elective (2026–27)**
+**Master in Business Analytics and Data Science — MLOps elective (2026–27)**
 
 Four short quizzes, one per module, five multiple-choice questions each (four options, one correct). They are light concept-checks to fix the key ideas after each module — not exam-level. Post each one after its module is taught.
 

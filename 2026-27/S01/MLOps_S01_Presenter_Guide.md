@@ -1,6 +1,6 @@
 # Session 1 · Presenter's guide — how to explain each slide to a non-technical cohort
 
-**MLOps elective · MBABD Part-Time 2026–27 · Session 1 (Live, 90 minutes)**
+**MLOps elective · Master in Business Analytics and Data Science · MBDS-PT2026F · Session 1 (Live, 90 minutes)**
 
 A companion to the deck's speaker notes, written for *delivery*: for each slide you get the **point** (why it's there), **say it like this** (plain-language framing and an analogy that works for students with no coding background), the **line to land**, and a **question to ask the room**. Timings match the notes in the deck.
 

@@ -1,6 +1,6 @@
 # MLOps · Final Test
 
-**Master in Business Analytics and Big Data — MLOps elective (2026–27)**
+**Master in Business Analytics and Data Science — MLOps elective (2026–27)**
 
 Coverage: all sessions (Sessions 1–12) — foundations & personas; pipelines, environments & security; CI/CD & deployment; monitoring & drift metrics; LLMOps; and AI governance & regulation. The paper is weighted towards the second half of the course (monitoring, LLMOps, governance).
 Format: 25 multiple-choice questions. Each has four options and **exactly one** correct answer.

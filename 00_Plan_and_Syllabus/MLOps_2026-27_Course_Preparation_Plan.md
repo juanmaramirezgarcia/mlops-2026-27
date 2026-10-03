@@ -2,7 +2,7 @@
 
 *Review of last year's materials, content decisions per session, forum discussion themes, video-lesson outlines and a dated production calendar*
 
-Master in Business Analytics and Big Data (Part-Time) · IE School of Science & Technology · 3rd Term
+Master in Business Analytics and Data Science (Part-Time) · IE School of Science & Technology · 3rd Term
 
 Professor: Juan Manuel Ramírez García
 
