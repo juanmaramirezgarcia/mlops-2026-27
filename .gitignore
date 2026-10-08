@@ -43,3 +43,6 @@ __pycache__/
 credentials*.json
 sa-*.json
 .env
+
+# Office temporary/lock files (open documents)
+~$*

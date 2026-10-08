@@ -26,7 +26,7 @@ Seven commits that tell the same story as the session, and two tags:
 |---|---|---|
 | 14 Jan | Add churn model: training script and sample data | "The data scientist's first version. Accuracy 0.91." |
 | 2 Feb | Add data validation: stop training if required columns are missing | "The first control: the pipeline now refuses bad data." |
-| 19 Feb | **Fix: reject extracts where a feature arrives mostly empty** | "NorthRetail's bug, caught. Read the message: it says *why*." |
+| 19 Feb | **Fix: reject extracts where a feature arrives mostly empty** | "A bug, caught the day it appeared. Read the message: it says *why*." (Keep NorthRetail for the debrief.) |
 | 20 Feb | Add tests for the validation rules | "Nobody has to remember to check; the check is code." |
 | 3 Mar · **v1.0** | Add model card with owner, training data and retrain trigger | "Before production: who is accountable, and when it must be retrained." |
 | 9 Jun · **v1.1** | Retrain on Q2 data and add promotion feature | "The world changed in March; the model caught up in June, and the history says so." |
@@ -56,7 +56,16 @@ Notes on the script: the commits are back-dated to Jan–Jun 2026 so the history
 
 ## 3. The four minutes, click by click
 
-Open the four tabs before the session. Share the browser window, not the whole screen. Zoom the browser to 125–150% so the back rows can read.
+Open the four tabs before the session, in a **private (incognito) window**: it shows exactly what students see, with no account menu, avatar or notifications. Share that browser window, not the whole screen. Zoom the browser to 125–150% so the back rows can read.
+
+| Tab | Page | URL |
+|---|---|---|
+| 1 | The history | `https://github.com/juanmaramirezgarcia/mlops-demo-churn/commits/main` |
+| 2 | The "Fix" commit | `https://github.com/juanmaramirezgarcia/mlops-demo-churn/commit/d503ae0f1fb7fa9e0daad0721e11328674a0b87b` |
+| 3 | The tags | `https://github.com/juanmaramirezgarcia/mlops-demo-churn/tags` |
+| 4 | The model card at v1.0 | `https://github.com/juanmaramirezgarcia/mlops-demo-churn/blob/v1.0/MODEL_CARD.md` |
+
+No internet? Open `demo/offline_fallback.html` instead: the same four views, built from the real repository, with links at the top in the same order.
 
 ### Tab 1 · The history (≈ 1 min)
 `https://github.com/juanmaramirezgarcia/mlops-demo-churn/commits/main`
@@ -69,7 +78,9 @@ Point at the green tick on the top commit: "We'll come back to that tick in Sess
 Click the commit **"Fix: reject extracts where a feature arrives mostly empty"** (19 Feb) → the diff view.
 Direct link: `https://github.com/juanmaramirezgarcia/mlops-demo-churn/commit/d503ae0f1fb7fa9e0daad0721e11328674a0b87b`
 
-> "This is a diff: exactly what changed, and nothing else. Eleven green lines. Read the comment at the top: *empty values used to be filled with zero, which the model read as a customer with zero months of tenure.* Does that sound familiar? It is the NorthRetail failure from the case you will diagnose after the break. Here it was caught, and the history says on which day, by whom, and why."
+> "This is a diff: exactly what changed, and nothing else. Eleven green lines. Read the comment at the top: *empty values used to be filled with zero, which the model read as a customer with zero months of tenure.* Remember this one: you will meet it again after the break. Here it was caught, and the history says on which day, by whom, and why."
+
+Do not name NorthRetail here: an empty feature read as zero is the first of the four failures students diagnose in the activity. Let them find it, then call back in the debrief (slide 28): "you already saw the fix for this one in the demo."
 
 Scroll up to the commit message: "The message is written for the person who reads this in a year. That person is usually you."
 
@@ -78,9 +89,9 @@ Scroll up to the commit message: "The message is written for the person who read
 
 > "A tag names a moment. **v1.0, 3 March**: this exact set of files went to production. **v1.1, 9 June**: this one replaced it. When the regulator, or the board, asks *which model was live in April?*, the answer is not a guess and not an e-mail search. It is v1.0, and you can open it."
 
-Click **v1.0** → "Browse files" (or the commit link) to show the model card: "Owner, training data, accuracy, retrain trigger: that is what 'ready for production' means. Session 12 is about this document."
+Switch to **tab 4**, the model card as it was at v1.0 (direct link, not "Browse files": that opens the repository front page, whose README still carries last year's master name): "Owner, training data, accuracy, retrain trigger: that is what 'ready for production' means. Session 12 is about this document."
 
-### Tab 4 · Back to the history (≈ 30 s)
+### Wrap-up · back to tab 1 (≈ 30 s)
 Return to tab 1.
 
 > "Three things: a history that says who, when and why; a diff that shows exactly what; a tag that says which version was live. Everything else in this course, pipelines, deployment, monitoring, governance, is built on this habit. No commands, no code: a folder with a memory."
@@ -93,7 +104,7 @@ Switch to slide 17, "What you just saw".
 
 | Problem | Do this |
 |---|---|
-| No internet / GitHub down | Show the three screenshots in `demo/screenshots/` (take them once after pushing: history, the fix diff, the tags page) and read the same script. |
+| No internet / GitHub down | Open `demo/offline_fallback.html` (works offline; the history, the fix diff, the tags and the model card, built from the real repository) and read the same script. |
 | The CI tick is red | Ignore it today; say "that cross is a story for Session 5". Fix afterwards: open the Actions tab, read the log. |
 | Students ask "what is Python?" | "A programming language; you do not need to read the code, only the green and red lines and the messages." |
 | A student asks to see the model itself | Open `src/train.py` at `v1.0`: "Twenty lines. The model is the small box in the middle; the history is the rest." |
@@ -105,6 +116,6 @@ Switch to slide 17, "What you just saw".
 - [ ] `setup_demo_repo.sh` run; `pytest` passes locally
 - [ ] Empty public repo created on GitHub; `git push -u origin main --tags` done
 - [ ] CI run finished (green tick on the latest commit)
-- [ ] Four tabs bookmarked in click order; commit hash of the "Fix" commit copied into tab 2's URL
-- [ ] Screenshots of the three pages saved as the offline fallback
+- [ ] Four tabs open in a private window, in click order (history, the Fix commit, tags, model card at v1.0)
+- [ ] `demo/offline_fallback.html` opens in the browser (the offline fallback)
 - [ ] Browser zoom at 125–150%; notifications off
