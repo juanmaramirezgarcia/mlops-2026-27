@@ -40,7 +40,7 @@ Registry: **churn-model** version 1 (from run 1) with alias `production`, tag "a
 
 Click the **accuracy** column header to sort. Point at the top: "The best number is 0.83. Is it the best model? Not yet: it is the best number."
 
-Tick two runs (`lr-3-features` and `rf-300-depth8`) and click **Compare**. Scroll to the parameters: "Same data version, different algorithm, different features. Now the difference is explainable."
+Tick two runs (`lr-3-features` and `rf-300-depth8`) and click **Compare**. Scroll to the parameters and point at `data_version` first: "Three things changed at once: the data (the March extract against the June one), the algorithm and the features. So is the jump from 0.81 to 0.83 a better algorithm, or just newer data? Without the log you would never know three things had changed; with it, you can ask the right question." (If someone asks: `rf-100` and `rf-300-depth8` share the June extract and the algorithm, so their difference really is just the settings.)
 
 ### Tab 1 · The rejected run (≈ 1.5 min)
 
