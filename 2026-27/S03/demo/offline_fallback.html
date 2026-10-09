@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Offline copy · MLflow churn-model</title><style>
+body{font:18px/1.45 -apple-system,Segoe UI,Calibri,Arial,sans-serif;color:#1b2a4a;margin:0;background:#fff}
+header{background:#1b2a4a;color:#fff;padding:14px 32px;position:sticky;top:0} header b{font-size:20px} .note{color:#b8c4d6;font-size:14px}
+nav a{color:#fff;margin-right:18px;text-decoration:none;border-bottom:2px solid #0e7c86;font-size:16px}
+section{padding:24px 32px 8px;max-width:1150px} h2{margin:0 0 12px;font-size:26px} h3{margin:10px 0 6px;font-size:18px}
+table{border-collapse:collapse;width:100%} td,th{padding:9px 12px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}
+th{color:#6b7280;font-weight:600} .num{text-align:right;font-variant-numeric:tabular-nums} tr.rej td{background:#fdecea}
+.tag{background:#0e7c86;color:#fff;border-radius:10px;padding:1px 9px;font-size:13px;margin-left:6px;white-space:nowrap} .red{background:#b42318}
+.msg{background:#f3f4f6;border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:20px} .muted{color:#6b7280}
+.two{display:flex;gap:24px} .two>div{flex:1}
+</style></head><body>
+<header><b>MLflow · churn-model</b> &nbsp;<span class="note">Offline copy of the Session 3 demo, read from the real mlflow.db. Use only if the MLflow UI will not start.</span><br>
+<nav><a href="#runs">1 · Runs table</a><a href="#rejected">2 · The rejected run</a><a href="#registry">3 · The registry</a></nav></header>
+<section id="runs"><h2>Experiment log: every attempt is a row</h2>
+<table><tr><th>Run</th><th>Algorithm</th><th>Features</th><th>Data version</th><th class=num>Accuracy</th><th class=num>ROC AUC</th></tr><tr><td><b>lr-3-features</b> <span class="tag">registered v1 · production</span></td><td>LogisticRegression</td>
+      <td>3</td><td>extract-2026-03-01</td><td class=num>0.809</td><td class=num>0.836</td></tr><tr><td><b>lr-4-features-promo</b></td><td>LogisticRegression</td>
+      <td>4</td><td>extract-2026-06-01</td><td class=num>0.823</td><td class=num>0.863</td></tr><tr><td><b>rf-100</b></td><td>RandomForest</td>
+      <td>5</td><td>extract-2026-06-01</td><td class=num>0.816</td><td class=num>0.845</td></tr><tr><td><b>rf-300-depth8</b> <span class="tag">registered v2 · challenger</span></td><td>RandomForest</td>
+      <td>5</td><td>extract-2026-06-01</td><td class=num>0.833</td><td class=num>0.869</td></tr><tr class="rej"><td><b>rf-300-depth8-extract-0612</b> <span class="tag red">rejected</span></td><td>RandomForest</td>
+      <td>5</td><td>extract-2026-06-12</td><td class=num>0.796</td><td class=num>0.816</td></tr></table>
+<p class="muted">The best number (0.833) is not automatically the best model: it still needs validation and sign-off.</p></section>
+<section id="rejected"><h2>The rejected run: the metric barely moved, validation caught it</h2><div class="msg"><b>rf-300-depth8-extract-0612</b><br>accuracy <b>0.796</b> · roc_auc 0.816</div>
+        <div class="two"><div><h3>Tags</h3><table><tr><th>owner</th><td>ML engineer, Data Platform</td></tr><tr><th>rejected</th><td>data validation failed: 60% of tenure_months empty, read as 0</td></tr><tr><th>requested_by</th><td>Customer Retention</td></tr></table></div><div><h3>Parameters</h3><table><tr><th>algorithm</th><td>RandomForest</td></tr><tr><th>data_version</th><td>extract-2026-06-12</td></tr><tr><th>features</th><td>tenure_months,monthly_charges,support_tickets,promo_weeks_last_quarter,is_monthly</td></tr><tr><th>max_depth</th><td>8</td></tr><tr><th>n_estimators</th><td>300</td></tr><tr><th>n_features</th><td>5</td></tr><tr><th>train_rows</th><td>2800</td></tr></table></div></div></section>
+<section id="registry"><h2>Registry: churn-model</h2><p>Customer churn model for the retention campaign. Owner: Customer Retention (accountable), Data Platform (responsible).</p>
+<table><tr><th>Version</th><th>Alias</th><th>Description</th><th>Tags</th><th>Source run</th></tr><tr><td><b>Version 1</b></td><td><span class="tag">@production</span> </td><td>v1.0 - baseline, 3 features. In production since 3 March 2026.</td><td>approved_by: Product owner, 3 March 2026</td><td>lr-3-features</td></tr><tr><td><b>Version 2</b></td><td><span class="tag">@challenger</span> </td><td>v1.1 candidate - random forest, 5 features. Passed validation on 9 June; awaiting sign-off.</td><td>validation: passed 9 June 2026; fairness check pending</td><td>rf-300-depth8</td></tr></table>
+<p class="muted">The application loads whatever <b>@production</b> points to. Promoting a model means moving that pointer, not copying files.</p></section>
+<section class="muted" style="padding-bottom:32px">Generated 2026-10-08 from S03/demo/mlflow/mlflow.db.</section></body></html>

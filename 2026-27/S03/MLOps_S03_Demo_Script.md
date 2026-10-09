@@ -106,7 +106,7 @@ Switch to slide 16, "What you just saw".
 | "Register model" button not where expected | Its position varies by MLflow version: on the run page, under **Models** (3.x) or under **Artifacts → model** (2.x). Rehearse the click once before class. |
 | Demo state changed after class | Optional A, B and C modify `mlflow.db` (extra runs, a third version, the alias moved). To restore the original five runs and two versions before reusing the demo, run `rebuild_demo.command` (about 30 s). |
 | `train_example.command` fails with "validation failed" | Deliberate: the script refuses data with more than 5% empty values. Check `--data` points at `churn_demo.csv`. |
-| Complete failure | Three screenshots in `demo/screenshots/` (runs table sorted, the rejected run's tags, the registry page). Take them once after setup. |
+| Complete failure (MLflow will not start) | Open `demo/offline_fallback.html` in the browser: the runs table, the rejected run and the registry, read from the real `mlflow.db`, with links at the top in the same order as the demo. Read the same script. |
 
 ---
 
@@ -115,5 +115,5 @@ Switch to slide 16, "What you just saw".
 - [ ] `start_mlflow_ui.command` run once the day before (first-time install) and again before class; both tabs open and zoomed
 - [ ] Compare view tried once (two runs ticked → Compare)
 - [ ] Optional A rehearsed once (Register model on `rf-100` → `churn-model`); Optional C rehearsed once (`train_example.command`, new row appears); then `rebuild_demo.command` run to reset
-- [ ] Screenshots saved as fallback
+- [ ] `demo/offline_fallback.html` opens in the browser (the offline fallback)
 - [ ] Slide 16 ready as the landing slide after the demo
