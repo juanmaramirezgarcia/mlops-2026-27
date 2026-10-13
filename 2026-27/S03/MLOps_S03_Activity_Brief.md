@@ -12,7 +12,7 @@
 | **Output per room** | One slide or one whiteboard, presented by a spokesperson in 2 minutes |
 | **Task** | A model-risk mitigation blueprint for a bank's card-fraud model |
 
-*The chat poll ("A model that works on the laptop can go to production the same day if the business is in a hurry") is run during the session and continued as Theme A of Forum 2.*
+*The chat poll ("A model that works on the laptop can go to production the same day if the business is in a hurry") is run during the session and continued as Optional Theme B of Forum 2.*
 
 ---
 
@@ -63,7 +63,7 @@ For each incident, fill a row of the blueprint. Then answer the bonus question.
 
 ### The chat poll (minute 41–44, slide "What goes wrong when a model goes from a laptop straight to production")
 
-Statement: "A model that works on the data scientist's laptop can go to production the same day if the business is in a hurry." AGREE/DISAGREE plus one line. Read two contrasting answers. Do not resolve; send to Forum 2, Theme A. The honest position, for the Friday synthesis: sometimes yes, for a low-risk internal model with a named owner and a rollback plan; never for a customer-facing or regulated decision. The point is not "always QA" but "the gate must be proportionate to the cost of being wrong".
+Statement: "A model that works on the data scientist's laptop can go to production the same day if the business is in a hurry." AGREE/DISAGREE plus one line. Read two contrasting answers. Do not resolve; send to Forum 2, Optional Theme B. The honest position, for the Friday synthesis: sometimes yes, for a low-risk internal model with a named owner and a rollback plan; never for a customer-facing or regulated decision. The point is not "always QA" but "the gate must be proportionate to the cost of being wrong".
 
 ### Expected mapping
 
