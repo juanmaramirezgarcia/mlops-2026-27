@@ -46,3 +46,6 @@ sa-*.json
 
 # Office temporary/lock files (open documents)
 ~$*
+
+# Forum evaluations with student names and grades: keep on this Mac only
+*Evaluation_and_Feedback*
