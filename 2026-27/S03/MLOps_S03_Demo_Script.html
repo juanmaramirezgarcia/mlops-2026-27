@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Session 3 MLflow Demo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@1,400;1,500&display=swap">
+<style>
+/* Layout: sticky run-of-show bar on top, slide index on the left (desktop), one card per slide.
+   Tokens: navy ground for chrome, paper-white reading surface, each session block owns one hue. */
+:root{
+  --bg:#F6F7FA; --surface:#FFFFFF; --ink:#18223A; --muted:#5B6476; --line:#DCE1EA;
+  --chrome:#1B2A4A; --chrome-ink:#FFFFFF; --chrome-muted:#B8C4D6; --accent:#0E7C86; --tint:#EEF1F6;
+  --f-body:"IBM Plex Sans",-apple-system,"Segoe UI",Calibri,Arial,sans-serif;
+  --f-say:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --c-open:#3F5B91;--c-pipe:#0E7C86;--c-data:#2F5FA8;--c-demo:#C8642A;--c-env:#6A4C9C;--c-break:#7A8494;--c-sec:#B42318;--c-act:#2E7D4F;--c-close:#55627C;--c-app:#7A8494;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1524; --surface:#172036; --ink:#E7ECF5; --muted:#A3AEC2; --line:#2A3550;
+  --chrome:#0A1020; --chrome-ink:#E7ECF5; --chrome-muted:#8E9BB4; --accent:#4FC3CC; --tint:#1D2840; --c-open:#9FB3DA;--c-pipe:#4FC3CC;--c-data:#7FA6E6;--c-demo:#F0A06E;--c-env:#B79BE3;--c-break:#A9B1BE;--c-sec:#F08A80;--c-act:#76C99A;--c-close:#AFC0DD;--c-app:#A9B1BE; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0F1524; --surface:#172036; --ink:#E7ECF5; --muted:#A3AEC2; --line:#2A3550;
+  --chrome:#0A1020; --chrome-ink:#E7ECF5; --chrome-muted:#8E9BB4; --accent:#4FC3CC; --tint:#1D2840; --c-open:#9FB3DA;--c-pipe:#4FC3CC;--c-data:#7FA6E6;--c-demo:#F0A06E;--c-env:#B79BE3;--c-break:#A9B1BE;--c-sec:#F08A80;--c-act:#76C99A;--c-close:#AFC0DD;--c-app:#A9B1BE; color-scheme:dark; }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+a{color:var(--accent)} a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--tint);padding:.08em .35em;border-radius:4px}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--chrome);color:var(--chrome-ink);padding:12px 16px 10px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.top-inner{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.top-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.top h1{font-size:1.05rem;font-weight:600;letter-spacing:.01em}
+.top .sub{color:var(--chrome-muted);font-size:.85rem}
+.ros{display:flex;width:100%;height:30px;border-radius:6px;overflow:hidden;gap:2px}
+.ros a{flex-grow:var(--w);flex-basis:0;min-width:0;background:var(--c);color:#fff;text-decoration:none;font-size:.72rem;font-weight:600;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
+.ros a:hover{filter:brightness(1.12)} .ros a{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.ros-scale{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.68rem;color:var(--chrome-muted)}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px}
+.toc{position:sticky;top:120px;align-self:start;max-height:calc(100vh - 140px);overflow:auto;font-size:.84rem;padding-right:4px}
+.toc h2{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:14px 0 4px}
+.toc a{display:flex;gap:8px;align-items:baseline;color:var(--ink);text-decoration:none;padding:2px 6px;border-radius:5px}
+.toc a:hover{background:var(--tint)}
+.toc .n{font-family:var(--f-mono);font-size:.75rem;color:var(--c);min-width:1.6em;font-weight:500}
+main{min-width:0;display:flex;flex-direction:column;gap:28px}
+.intro{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;max-width:72ch}
+.intro p{margin:0}
+.block-head{display:flex;align-items:center;gap:12px;padding-top:8px;border-top:3px solid var(--c);scroll-margin-top:130px}
+.block-head h2{font-size:1.35rem;font-weight:700;color:var(--c)}
+.block-head .mins{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-left:auto;white-space:nowrap}
+.block-note{color:var(--muted);font-size:.95rem;margin:0;max-width:72ch}
+.cards{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:130px}
+.card-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.badge{flex:none;width:34px;height:34px;border-radius:8px;background:var(--c);color:#fff;font-family:var(--f-mono);font-weight:500;display:grid;place-items:center;font-size:.9rem}
+.card-head h3{font-size:1.05rem;font-weight:600;flex:1;min-width:0}
+.pill{flex:none;font-family:var(--f-mono);font-size:.74rem;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:start}
+.lab{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600;padding-top:.3em}
+.val{min-width:0;max-width:75ch}
+.val p{margin:0 0 .5em}
+.row.land .val{font-family:var(--f-say);font-style:italic;font-size:1.12rem;line-height:1.45;border-left:3px solid var(--c);padding:2px 0 2px 12px;color:var(--ink)}
+.row.ask .val{background:var(--tint);border-radius:8px;padding:6px 10px}
+.extra{border-top:1px dashed var(--line);padding-top:10px;min-width:0}
+.extra > *:first-child{margin-top:0}
+.extra p,.extra li{max-width:75ch}
+.extra ul,.extra ol{padding-left:1.3em;margin:.4em 0}
+.extra blockquote,.say{margin:.6em 0;background:var(--tint);border-left:3px solid var(--c);border-radius:0 8px 8px 0;padding:8px 12px;font-family:var(--f-say);font-style:italic}
+.extra blockquote p,.say p{margin:.2em 0}
+.tbl{overflow-x:auto;margin:.5em 0}
+table{border-collapse:collapse;font-size:.88rem;min-width:520px;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--tint);font-weight:600}
+td{font-variant-numeric:tabular-nums}
+.checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.checklist label{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;cursor:pointer}
+.checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.checklist input:checked + span{color:var(--muted);text-decoration:line-through}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:130px}
+.panel h2{font-size:1.15rem} .panel p{margin:0} .panel ul,.panel ol{margin:0;padding-left:1.3em}
+.eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
+@media (max-width:900px){ .wrap{grid-template-columns:minmax(0,1fr)} .toc{display:none} .ros a{font-size:0;padding:0} }
+@media (max-width:560px){ .row{grid-template-columns:minmax(0,1fr);gap:2px} .card-head{flex-wrap:wrap} body{font-size:15px} }
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+details.card summary{cursor:pointer;list-style:none} details.card summary::-webkit-details-marker{display:none}
+details.card{border-style:dashed} details.card[open] summary{border-bottom:1px solid var(--line)} details.card:not([open]) summary{border-bottom:0}
+.card-body .extra p{margin:.4em 0}</style></head><body>
+<div hidden id="store" data-k="s03-demo"></div><header class="top"><div class="top-inner">
+  <div class="top-row"><h1>Session 3 · MLflow demo: the memory for models</h1><span class="sub">7 minutes · browser only · slide 15 → 16</span></div>
+  <nav class="ros" aria-label="Demo timeline"><a href="#step1" style="--c:var(--c-pipe);--w:2.5" title="Runs table · ≈ 2.5 min">Runs table</a><a href="#step2" style="--c:var(--c-sec);--w:1.5" title="Rejected run · ≈ 1.5 min">Rejected run</a><a href="#step3" style="--c:var(--c-demo);--w:2" title="Registry · ≈ 2 min">Registry</a><a href="#step4" style="--c:var(--c-env);--w:1" title="Optional · ≈ 1 min">Optional</a><a href="#step7" style="--c:var(--c-open);--w:0.5" title="Back to slide · ≈ 0.5 min">Back to slide</a></nav>
+  <div class="ros-scale" aria-hidden="true"><span>0′</span><span>2′</span><span>4′</span><span>6′</span><span>7.5′</span></div>
+</div></header>
+<div class="wrap">
+  <nav class="toc" aria-label="Sections"><a href="#d1" style="--c:var(--accent)"><span class="n">1</span>Setup (already done; what you need to do before the session)</a><a href="#d2" style="--c:var(--accent)"><span class="n">2</span>What the five runs tell</a><h2>3. The seven minutes, click by click</h2><a href="#step1" style="--c:var(--c-pipe)"><span class="n">1</span>Tab 1 · Experiments → churn-model: the runs table</a><a href="#step2" style="--c:var(--c-sec)"><span class="n">2</span>Tab 1 · The rejected run</a><a href="#step3" style="--c:var(--c-demo)"><span class="n">3</span>Tab 2 · Models → churn-model: the registry</a><a href="#step4" style="--c:var(--c-env)"><span class="n">+</span>Optional A · Register a model live</a><a href="#step5" style="--c:var(--c-env)"><span class="n">+</span>Optional B · Promote the challenger</a><a href="#step6" style="--c:var(--c-env)"><span class="n">+</span>Optional C · Show where the memory comes from: train a model live</a><a href="#step7" style="--c:var(--c-open)"><span class="n">4</span>Back to the slide</a><a href="#d4" style="--c:var(--accent)"><span class="n">4</span>If something goes wrong</a><a href="#d5" style="--c:var(--accent)"><span class="n">5</span>Checklist</a></nav>
+  <main><div class="intro"><p><strong>Slot:</strong> minutes 28–35 (slide 15 "The memory for models", then slide 16 "What you just saw")</p><p><strong>Duration:</strong> 7 minutes (8–9 with the two optional steps), browser only, no commands typed during class</p><p><strong>Setup file:</strong> <code>demo/mlflow_demo_setup.py</code> (creates five logged runs and a registry with two versions)</p></div><section class="panel" id="d1"><h2>1. Setup (already done; what you need to do before the session)</h2><p>The demo database was built for you and lives in <code>S03/demo/mlflow/</code>: <code>mlflow.db</code> (five runs, the registry with two versions and their aliases), <code>mlruns/</code> (the model files) and <code>churn_demo.csv</code>. The stored paths already point at that folder on your Mac, so do not move the folder.</p>
+<p><strong>To start the UI</strong>, double-click <code>start_mlflow_ui.command</code> in <code>S03/demo/mlflow/</code> (or run it from Terminal). The first time it creates a virtual environment in that folder and installs MLflow, which takes two or three minutes; afterwards it starts in about 20 seconds and opens <code>http://127.0.0.1:5000</code> in your browser by itself (port 5001 if 5000 is busy). Stop it with Ctrl+C in the Terminal window. Do this once the day before class to trigger the first-time install, and again just before the session.</p>
+<p>If macOS refuses to open the <code>.command</code> file ("cannot be opened because it is from an unidentified developer"), right-click it → Open → Open, once; or run <code>bash start_mlflow_ui.command</code> in Terminal.</p>
+<p>Check the two pages you will use: <strong>Experiments → churn-model</strong> (five runs) and <strong>Models → churn-model</strong> (versions 1 and 2, aliases <code>production</code> and <code>challenger</code>). Keep both tabs open; zoom the browser to 125%.</p>
+<p>To rebuild the runs from scratch on your Mac (not needed): <code>rebuild_demo.command</code> in the same folder; it deletes the database and re-runs <code>../mlflow_demo_setup.py</code>. The run names and metrics are deterministic (fixed random seeds), so the numbers below will match.</p></section><section class="panel" id="d2"><h2>2. What the five runs tell</h2><div class="tbl"><table>
+<thead>
+<tr>
+<th>Run name</th>
+<th>What it is</th>
+<th>Accuracy</th>
+<th>Say</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lr-3-features</code></td>
+<td>Logistic regression, 3 features, March extract</td>
+<td>~0.81</td>
+<td>"The first baseline. This is the model in production."</td>
+</tr>
+<tr>
+<td><code>lr-4-features-promo</code></td>
+<td>Same, plus the promotions feature, June extract</td>
+<td>~0.82</td>
+<td>"The world changed in March; here the feature that captures it."</td>
+</tr>
+<tr>
+<td><code>rf-100</code></td>
+<td>Random forest, 100 trees, 5 features</td>
+<td>~0.82</td>
+<td>"A different algorithm. Same data version; you can see that."</td>
+</tr>
+<tr>
+<td><code>rf-300-depth8</code></td>
+<td>Random forest, 300 trees, depth 8</td>
+<td>~0.83</td>
+<td>"The best so far. Registered as the candidate."</td>
+</tr>
+<tr>
+<td><code>rf-300-depth8-extract-0612</code></td>
+<td>Same model on an extract where 60% of <code>tenure_months</code> arrived empty and was read as 0</td>
+<td>~0.80</td>
+<td>"The NorthRetail bug. The metric barely moved. Validation caught it, not the metric."</td>
+</tr>
+</tbody>
+</table></div>
+<p>Registry: <strong>churn-model</strong> version 1 (from run 1) with alias <code>production</code>, tag "approved by Product owner, 3 March 2026"; version 2 (from run 4) with alias <code>challenger</code>, tag "validation passed 9 June 2026; fairness check pending".</p></section><section class="cards" id="d3" style="--c:var(--c-demo)"><div class="block-head"><h2>3. The seven minutes, click by click</h2><span class="mins">minutes 28–35 · slide 15 → 16</span></div><article class="card" id="step1" style="--c:var(--c-pipe)"><div class="card-head"><span class="badge">1</span><h3>Tab 1 · Experiments → churn-model: the runs table</h3><span class="pill">≈ 2.5 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><blockquote class="say">
+<p>"This is an experiment log. Every attempt to train the churn model is one row: when, by whom, which algorithm, which settings, which <strong>version of the data</strong>, and what came out. María's notebook had three random forests copy-pasted and edited by hand; here they are rows you can sort and compare."</p>
+</blockquote>
+<p>Click the <strong>accuracy</strong> column header to sort. Point at the top: "The best number is 0.83. Is it the best model? Not yet: it is the best number."</p>
+<p>Tick two runs (<code>lr-3-features</code> and <code>rf-300-depth8</code>) and click <strong>Compare</strong>. Scroll to the parameters and point at <code>data_version</code> first: "Three things changed at once: the data (the March extract against the June one), the algorithm and the features. So is the jump from 0.81 to 0.83 a better algorithm, or just newer data? Without the log you would never know three things had changed; with it, you can ask the right question." (If someone asks: <code>rf-100</code> and <code>rf-300-depth8</code> share the June extract and the algorithm, so their difference really is just the settings.)</p></div></div></article><article class="card" id="step2" style="--c:var(--c-sec)"><div class="card-head"><span class="badge">2</span><h3>Tab 1 · The rejected run</h3><span class="pill">≈ 1.5 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Go back to the runs table and click <code>rf-300-depth8-extract-0612</code>. Show the <strong>Tags</strong>: <code>rejected: data validation failed: 60% of tenure_months empty, read as 0</code>. Show the metric: accuracy ~0.80.</p>
+<blockquote class="say">
+<p>"Look at the accuracy: 0.80, against 0.83. If you were only watching the metric you would say 'a bit worse, whatever'. But 60% of one feature was empty and read as zero: that is NorthRetail's bug. The validation check caught it, the metric did not. This is why validation is a step in the pipeline and not a comment saying 'looks fine'."</p>
+</blockquote></div></div></article><article class="card" id="step3" style="--c:var(--c-demo)"><div class="card-head"><span class="badge">3</span><h3>Tab 2 · Models → churn-model: the registry</h3><span class="pill">≈ 2 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><blockquote class="say">
+<p>"The experiment log is every attempt. The registry is the shortlist: the models that matter, with a version number, an owner, and a status."</p>
+</blockquote>
+<p>Show version 1: alias <strong>production</strong>, the tag with the approval date, the description "in production since 3 March". Show version 2: alias <strong>challenger</strong>, "validation passed 9 June; fairness check pending".</p>
+<p>Click the alias <code>production</code>: "The application does not load 'the model from Tuesday'; it loads whatever the alias <code>production</code> points to. Promoting version 2 means moving this pointer. Nobody copies files; there is a record of who moved it and when."</p>
+<p>Click version 1 → <strong>Source run</strong>: "And from the registry you walk back to the run, the settings, the data version. Session 1's history for code; this is the same for models."</p></div></div></article><details class="card" id="step4" style="--c:var(--c-env)"><summary class="card-head"><span class="badge">+</span><h3>Optional A · Register a model live</h3><span class="pill">≈ 1 min</span></summary><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Registering in front of them turns the registry from a screenshot into a decision. Go back to <strong>Tab 1</strong>, open the run <code>rf-100</code> (the one that is neither the baseline nor the candidate). In the run page, find the logged model (in MLflow 3.x it is under the <strong>Models</strong> or <strong>Artifacts</strong> section of the run) and click <strong>Register model</strong>. In the dialog choose the existing model <code>churn-model</code> and confirm. Version 3 appears.</p>
+<blockquote class="say">
+<p>"That took three seconds. It is now on the shortlist. Is it in production? No. It has no alias, no owner, no approval. It is a candidate that someone must now validate, and the registry shows exactly that."</p>
+</blockquote>
+<p>Switch to <strong>Tab 2</strong> and refresh: three versions side by side. Version 1 with <code>production</code>, version 2 with <code>challenger</code> and the tag "fairness check pending", version 3 with nothing.</p>
+<blockquote class="say">
+<p>"Registering is cheap. Promoting is the gate."</p>
+</blockquote></div></div></details><details class="card" id="step5" style="--c:var(--c-env)"><summary class="card-head"><span class="badge">+</span><h3>Optional B · Promote the challenger</h3><span class="pill">≈ 1 min, only if the runs table went quickly</span></summary><div class="card-body"><div class="extra" style="border:0;padding:0"><p>On the Models page, open version 2 and edit its aliases: add <code>production</code>. MLflow moves the alias off version 1 automatically (an alias points to one version at a time). Refresh.</p>
+<blockquote class="say">
+<p>"The application now serves version 2. Nobody copied a file. Version 1 is still there to roll back to, and the change is timestamped with who made it. This is what Gate 2 looks like in a tool: a pointer that only certain people may move."</p>
+</blockquote></div></div></details><details class="card" id="step6" style="--c:var(--c-env)"><summary class="card-head"><span class="badge">+</span><h3>Optional C · Show where the memory comes from: train a model live</h3><span class="pill">≈ 1.5 min</span></summary><div class="card-body"><div class="extra" style="border:0;padding:0"><p>For a cohort that asks "but how does a run get in there?": the file <code>train_with_mlflow.py</code> in the same folder is a plain training script with the MLflow lines marked <code># [MLflow]</code>. Two ways to use it.</p>
+<p><em>Show the code (30 s).</em> Open the file in any editor, scroll to section 5 and point at the marked lines: "the settings, the metrics, the tags, the model file. Eight lines. Everything else is what María already wrote." The appendix slide at the end of the deck shows the same before/after if you prefer not to open an editor.</p>
+<p><em>Run it (1 min).</em> Double-click <code>train_example.command</code> (or, in Terminal, from the <code>mlflow/</code> folder: <code>./.venv/bin/python train_with_mlflow.py</code>). It validates the data, trains a random forest and prints one line: <code>Run logged: RandomForest accuracy=0.823 …</code>. Refresh <strong>Tab 1</strong>: a new row, <code>rf-live-&lt;today&gt;</code>, tagged "trained live in Session 3", with <code>code_version: not versioned</code> because the folder is not a git repository (a good remark: "the run is logged, but the code that produced it is not; that is why the repository from Session 1 matters").</p>
+<p>Two variants worth knowing. <code>--algorithm lr</code> trains a logistic regression on the five features and scores about 0.85, higher than the registered candidate: a live example of "the best number is not automatically the best model" (nobody has validated it). <code>--register</code> also creates version 3 in the registry with no alias and no owner, the same lesson as Optional A without the clicks.</p>
+<p>If you do more than one optional step, skip the <strong>Compare</strong> click in the runs table to stay inside eight or nine minutes.</p></div></div></details><article class="card" id="step7" style="--c:var(--c-open)"><div class="card-head"><span class="badge">4</span><h3>Back to the slide</h3><span class="pill">≈ 30 s</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><blockquote class="say">
+<p>"Three things: every attempt is a row, not a memory; the rejected run shows why validation is not a metric; and the registry is a pointer with an owner, so registering is cheap and promoting is the gate."</p>
+</blockquote>
+<p>Switch to slide 16, "What you just saw".</p></div></div></article></section><section class="panel" id="d4"><h2>4. If something goes wrong</h2><div class="tbl"><table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Do this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI not up yet</td>
+<td>It needs about 20 s after the command; the first run also installs packages (2–3 min). Start it before class.</td>
+</tr>
+<tr>
+<td>Port 5000 busy (macOS AirPlay uses it)</td>
+<td>The launcher switches to 5001 by itself; open <code>http://127.0.0.1:5001</code>.</td>
+</tr>
+<tr>
+<td>Runs missing</td>
+<td>The UI was started from a different folder, or the <code>mlflow/</code> folder was moved. Use the launcher, and keep the folder where it is (or run <code>rebuild_demo.command</code>).</td>
+</tr>
+<tr>
+<td>Registry page empty</td>
+<td>Same cause as above; the registry lives inside <code>mlflow.db</code>.</td>
+</tr>
+<tr>
+<td>No time</td>
+<td>Do only the runs table (sort, compare) and the registry page. Skip the rejected run (it is on slide 16 anyway) and both optional steps.</td>
+</tr>
+<tr>
+<td>"Register model" button not where expected</td>
+<td>Its position varies by MLflow version: on the run page, under <strong>Models</strong> (3.x) or under <strong>Artifacts → model</strong> (2.x). Rehearse the click once before class.</td>
+</tr>
+<tr>
+<td>Demo state changed after class</td>
+<td>Optional A, B and C modify <code>mlflow.db</code> (extra runs, a third version, the alias moved). To restore the original five runs and two versions before reusing the demo, run <code>rebuild_demo.command</code> (about 30 s).</td>
+</tr>
+<tr>
+<td><code>train_example.command</code> fails with "validation failed"</td>
+<td>Deliberate: the script refuses data with more than 5% empty values. Check <code>--data</code> points at <code>churn_demo.csv</code>.</td>
+</tr>
+<tr>
+<td>Complete failure (MLflow will not start)</td>
+<td>Open <code>demo/offline_fallback.html</code> in the browser: the runs table, the rejected run and the registry, read from the real <code>mlflow.db</code>, with links at the top in the same order as the demo. Read the same script.</td>
+</tr>
+</tbody>
+</table></div></section><section class="panel" id="d5"><div class="eyebrow">Before class</div><h2>5. Checklist</h2><ul class="checklist"><li><label for="d-1"><input type="checkbox" id="d-1"><span><code>start_mlflow_ui.command</code> run once the day before (first-time install) and again before class; both tabs open and zoomed</span></label></li><li><label for="d-2"><input type="checkbox" id="d-2"><span>Compare view tried once (two runs ticked → Compare)</span></label></li><li><label for="d-3"><input type="checkbox" id="d-3"><span>Optional A rehearsed once (Register model on <code>rf-100</code> → <code>churn-model</code>); Optional C rehearsed once (<code>train_example.command</code>, new row appears); then <code>rebuild_demo.command</code> run to reset</span></label></li><li><label for="d-4"><input type="checkbox" id="d-4"><span><code>demo/offline_fallback.html</code> opens in the browser (the offline fallback)</span></label></li><li><label for="d-5"><input type="checkbox" id="d-5"><span>Slide 16 ready as the landing slide after the demo</span></label></li></ul></section></main>
+</div><script>
+(function(){
+  var key='s03-demo';
+  var saved={}; try{ saved=JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){}
+  document.querySelectorAll('.checklist input[type=checkbox]').forEach(function(cb){
+    if(saved[cb.id]!==undefined) cb.checked=saved[cb.id];
+    cb.addEventListener('change',function(){ saved[cb.id]=cb.checked; try{ localStorage.setItem(key,JSON.stringify(saved)); }catch(e){} });
+  });
+})();
+</script></body></html>
