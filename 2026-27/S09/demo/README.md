@@ -27,4 +27,6 @@ python run_alert_checks.py ; echo "exit code $?"      # ~10 s; expect 3 PASS, 5 
 python render_assets.py                               # optional: refresh the two PNGs
 ```
 
-Numbers are deterministic (fixed seeds): drifted-features 3 of 7 · charges mean 76.5 · prediction drift 0.116 · accuracy overall 0.80 (PASS) · North, tenure 3y+ 0.65 on 349 (FIRE) · p95 latency 659 ms (incident) · batch 05:42 · missing 0%.
+Numbers are deterministic (fixed seeds): drifted-features 2 of 6 · charges mean 76.5 · prediction drift 0.116 · accuracy overall 0.80 (PASS) · North, tenure 3y+ 0.65 on 349 (FIRE) · p95 latency 659 ms (incident) · batch 05:42 · missing 0%.
+
+Recording the demo for the video: see `../MLOps_S09_Demo_Script.md`.

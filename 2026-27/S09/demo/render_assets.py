@@ -43,7 +43,8 @@ img = Image.new("RGB", (W, 60 + 34 * len(md) + 40), "white")
 d = ImageDraw.Draw(img)
 d.rectangle([0, 0, W, 56], fill="#4A154B"); d.text((24, 14), "#churn-model-alerts", font=fb, fill="white")
 d.rectangle([20, 72, 26, img.height - 20], fill="#E07A2F")
-d.text((44, 74), "monitoring-bot  APP  11:46", font=fs, fill="#616061")
+_t = re.search(r"monitoring run .*? (\d\d:\d\d)", raw[0])
+d.text((44, 74), f"monitoring-bot  APP  {_t.group(1) if _t else ''}", font=fs, fill="#616061")
 y = 108
 for ln in md:
     txt = ln.replace("*", "")

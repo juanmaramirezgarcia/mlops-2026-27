@@ -27,5 +27,6 @@ jobs:
                --data "$(python -c 'import json;print(json.dumps({"text": open("alert_message.md").read()}))')" \
                "${{ secrets.SLACK_WEBHOOK_CHURN_ALERTS }}"
       - name: Keep the report
+        if: always()                            # also (above all) when a rule fired
         uses: actions/upload-artifact@v4
         with: { name: alert_checks, path: alert_checks.html }

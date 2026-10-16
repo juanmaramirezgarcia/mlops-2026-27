@@ -30,7 +30,7 @@ Record in segments; each is a separate take and a separate chapter marker on the
 
 - **Read the notes, not the slides.** The script in the notes is written to be spoken; it says more than the slide shows, on purpose. Numbers on slides (the confusion matrix 140, 60, 110, 690; overall accuracy 82% → 80%; the North segment 89% → 65%) are the ones the script uses; do not change one without the other.
 - **Pace.** About 130 words a minute. Each slide's notes end with a `[Timing: from–to]` line; if you are a minute late at the end of a segment, it does not matter, but re-check at segments 5 and 6, which are the longest.
-- **The demo (slides 22–23) is a screen recording, not a slide.** Record it separately and cut it in. Before recording: double-click `S09/demo/update_venv_and_run.command` once (it adds Evidently to the Session 3 venv and does a first run), then open a terminal in `S09/demo/`, activate the venv (`source ../../S03/demo/mlflow/.venv/bin/activate`), zoom the terminal font to 18 pt, and have `monitoring.yml` and `alert_message.md` open in an editor and `alert_checks.html` open in the browser. Then: (1) `python run_alert_checks.py`, about ten seconds; read the PASS/FIRE lines aloud following the slide 22 notes, and finish with `echo $?` → `1`; (2) show `monitoring.yml` (the two cron lines, `if: failure()`), then `alert_message.md`, then the browser report and click **Tests** (1 success, 3 fail), following the slide 23 notes. The slides carry the same three pictures as fallback, so if the recording fails the video still works from the slides alone. The console output is deterministic (fixed seeds); only the timestamp changes.
+- **The demo (slides 22–23) is a screen recording, not a slide.** Record it separately and cut it in. The full click-by-click, with what to say at each step, is in `MLOps_S09_Demo_Script.md`; the summary follows. Before recording: double-click `S09/demo/update_venv_and_run.command` once (it adds Evidently to the Session 3 venv and does a first run), then open a terminal in `S09/demo/`, activate the venv (`source ../../S03/demo/mlflow/.venv/bin/activate`), zoom the terminal font to 18 pt, and have `monitoring.yml` and `alert_message.md` open in an editor and `alert_checks.html` open in the browser. Then: (1) `python run_alert_checks.py`, about ten seconds; read the PASS/FIRE lines aloud following the slide 22 notes, and finish with `echo $?` → `1`; (2) show `monitoring.yml` (the two cron lines, `if: failure()`), then `alert_message.md`, then the browser report and click **Tests** (1 success, 3 fail), following the slide 23 notes. The slides carry the same three pictures as fallback, so if the recording fails the video still works from the slides alone. The console output is deterministic (fixed seeds); only the timestamp changes.
 - **Setup.** Slides at full screen, notes on a second display or printed. Record segment by segment; a mistake costs one segment, not the hour. Camera optional; if used, small, bottom right.
 - **Pauses.** Say "pause here if you want to write your one-line note" at the end of slides 7 (the three drifts table), 12 (which metric for which decision), 13 (which metrics need the truth) and 21 (the anatomy of a rule). Those four slides are where the quiz answers live.
 - **Consistency with the live sessions.** The examples are the ones students already know: TelcoNova (Session 7 activity), IberBank (Sessions 3 and 5), NorthRetail (Session 1), and the HR assistant, which Session 10 builds. Keep the names.
@@ -40,15 +40,15 @@ Record in segments; each is a separate take and a separate chapter marker on the
 
 | File | What it is | Used on |
 |---|---|---|
-| `alerts.yaml` | The eight monitoring rules for the TelcoNova churn model: metric, threshold, window, severity (incident/trend), route, action | Slide 21 |
-| `run_alert_checks.py` | The monitoring job (≈100 lines): scores reference and current data, runs Evidently drift and missing-value checks as tests, computes accuracy overall and per region × tenure band on the month's labels, reads batch time and p95 latency, prints PASS/FIRE per rule, writes `alert_message.md` and `alert_checks.html`, exits 1 if any rule fired | Slide 22, Demo 1 |
-| `monitoring.yml` | The GitHub Actions workflow that runs the job weekly (drifts) and on the 2nd of the month (labels have arrived), posts the message only `if: failure()`, and keeps the report as an artefact | Slide 23, Demo 2 |
+| `alerts.yaml` | The eight monitoring rules for the TelcoNova churn model: metric, threshold, window, severity (incident/trend), route, action. `drifted-features` counts the model's six inputs only (the prediction has its own rule) | Slide 21 |
+| `run_alert_checks.py` | The monitoring job (≈120 lines): scores reference and current data, runs Evidently drift and missing-value checks as tests, computes accuracy overall and per region × tenure band on the month's labels, reads batch time and p95 latency, prints PASS/FIRE per rule, writes `alert_message.md` and `alert_checks.html`, exits 1 if any rule fired | Slide 22, Demo 1 |
+| `monitoring.yml` | The GitHub Actions workflow that runs the job weekly (drifts) and on the 2nd of the month (labels have arrived), posts the message only `if: failure()`, and keeps the report as an artefact `if: always()` (so the evidence is kept precisely when a rule fired) | Slide 23, Demo 2 |
 | `reference.csv`, `current.csv`, `churn_model.pkl` | June reference, October current data and the model (the Session 7 demo assets, reused) | inputs |
 | `alert_checks.html` | Evidently report; the **Tests** tab shows the four data rules with their thresholds (1 success, 3 fail) | Slide 23, Demo 2 |
 | `alert_message.md`, `console_output.txt` | The last run's message and console output, as text | reference |
 | `console_output.png`, `alert_message.png`, `alert_checks.png`, `alert_checks_tests.png` | The same, rendered as images for the slides (`render_assets.py` regenerates the first two) | Slides 22–23 |
 
-Expected console result: **3 passed** (missing-features 0%, accuracy-overall 0.80, batch 05:42) and **5 fired** (drifted-features 3 of 7, charges-mean-shift 76.5 > 70, prediction-drift 0.116 ≥ 0.10, accuracy-segment North 3y+ 0.65 on 349 customers, latency-p95 659 ms · incident). The point of the demo is the pair accuracy-overall PASS / accuracy-segment FIRE, the exit code, and the two cron schedules: the truth has its own calendar.
+Expected console result: **3 passed** (missing-features 0%, accuracy-overall 0.80, batch 05:42) and **5 fired** (drifted-features 2 of 6 (the limit), charges-mean-shift 76.5 > 70, prediction-drift 0.116 ≥ 0.10, accuracy-segment North 3y+ 0.65 on 349 customers, latency-p95 659 ms · incident). The point of the demo is the pair accuracy-overall PASS / accuracy-segment FIRE, the exit code, and the two cron schedules: the truth has its own calendar.
 
 ## 5. Knowledge check
 
@@ -67,23 +67,23 @@ d) Precision at the 0.5 threshold, overall; performance decay
 
 **Q2.** IberBank's fraud model blocks about 0.4% of card payments. The team reports recall of 92%, computed on the chargebacks that arrived for the payments the model let through. A colleague objects that the number cannot mean what they think. Why, and what would fix it?
 
-a) The number is fine: chargebacks are the ground truth for fraud
-b) Blocked payments never happen, so their truth is never learned; the false positives are invisible and recall is computed only on the cases the model chose to let through (selective labels). Fix: let a small random sample of flagged payments through, or review them by hand
-c) Recall should be replaced by accuracy, which does not need labels
-d) The problem is latency: chargebacks arrive 30–90 days late, so the metric should be computed weekly instead
+a) The number is reliable: chargebacks are the bank's ground truth for fraud, and 92% is computed on thousands of payments, so it is statistically solid
+b) The number is out of date: chargebacks arrive 30–90 days late, so recall should be recomputed every week on the latest payments instead
+c) The number uses the wrong metric: accuracy should replace recall, because it can be computed from the logged payments without waiting for chargebacks
+d) Blocked payments never happen, so whether they were fraud is never learned (selective labels). Fix: let a small random sample of flagged payments through, or review a sample by hand
 
 **Q3.** A fraud model blocks 0.4% of transactions. A colleague reports "the model is 99.6% accurate" and proposes accuracy as the A/B metric for the new version. What is wrong?
 
-a) Nothing; 99.6% is a strong result
-b) Accuracy rewards the majority class; a model that blocks nothing also scores 99.6%. Use fraud caught at a fixed false-positive rate (recall at fixed precision)
-c) Accuracy should be replaced by latency for fraud models
-d) Accuracy is fine but must be computed on the training set
+a) Accuracy rewards the majority class: a model that blocks nothing also scores 99.6%. Compare versions on fraud caught (recall) at a fixed false-positive rate
+b) Nothing: 99.6% is a strong result, and accuracy is the usual A/B metric because it counts every transaction the model scored
+c) Accuracy is the right metric, but it must be computed on the training set, where every transaction has a complete label
+d) Accuracy should be replaced by p95 latency, because for a card-payment model speed matters more than being right
 
 **Q4.** After a deployment on Friday evening, the churn model flags 60% of customers as high risk instead of the usual 12%. Labels will not arrive for a month. Which metric shows the problem today?
 
-a) Prediction drift: the distribution of the model's own scores against the reference
-b) Concept drift, measured on labels
-c) Precision on the monthly labelled sample
+a) Concept drift, measured on the labels when they arrive
+b) Precision on the monthly labelled sample
+c) Prediction drift: the distribution of the model's own scores against the reference
 d) Cost per thousand predictions
 
 **Q5.** The retention team gives a €50 discount to every customer the model scores above 80% risk. A month later, only half of those customers had actually been at risk. The ranking of customers was still correct. Which metric captures this failure?
@@ -93,19 +93,19 @@ b) Recall
 c) Calibration (the calibration curve or Brier score)
 d) Throughput
 
-**Q6.** The fraud model's requirement is "answer in under 150 ms". The average latency is 90 ms, yet the card network reports that about one in twenty transactions times out. Which number should the dashboard show?
+**Q6.** The fraud model's requirement is "answer in under 150 ms". The average latency is 90 ms, yet the card network reports that about one in twenty payments is answered too late. Which number should the dashboard show?
 
-a) The average latency, which already meets the requirement
-b) The 95th-percentile latency (p95)
-c) The error rate on the training set
+a) The 95th-percentile latency (p95)
+b) The average latency, which already meets the requirement
+c) The error rate on the training data
 d) The share of drifted features
 
 **Q7.** The HR assistant told an employee they were entitled to 30 days of holiday; the policy document says 23. The retrieved passage was correct. Which metric counts this failure, and how is it measured?
 
-a) Retrieval hit rate on the golden set, measured by word overlap
-b) Hallucination / groundedness: a judge compares each claim in the answer with the retrieved passages, confirmed by a human sample
-c) Time to first token, p95
-d) Escalation rate
+a) Time to first token, p95, measured on every request
+b) Escalation rate, measured from "talk to a human" requests
+c) Retrieval hit rate on the golden set, measured by word overlap with the approved answer
+d) Hallucination / groundedness: a judge compares each claim in the answer with the retrieved passages, confirmed by a human sample
 
 **Q8.** After the HR policy documents were updated, the assistant keeps giving answers that match the old policy. Retrieval brings back the new passages. Which metric would reveal that the answers are not built from what was retrieved?
 
@@ -117,33 +117,35 @@ d) Thumbs-up rate
 **Q9.** The monthly bill for the HR assistant has risen 40% with the same number of conversations, after someone edited the prompt to add instructions and the document chunks were made longer. Which metric would have shown the change as it happened?
 
 a) Hallucination rate
-b) Tokens per request (input and output), tracked over time
-c) Accuracy
+b) Accuracy
+c) Tokens per request (input and output), tracked over time
 d) Share of drifted input features
 
 **Q10.** In one week, three of the HR assistant's answers contained an employee's full name and salary, copied from an example in a policy document. How should this metric be treated in the monitoring plan?
 
-a) As a trend: alert if the weekly rate exceeds 5%
-b) As an incident: a PII detector on every output with a threshold of zero, blocking the output and paging the on-call engineer
-c) As a quality issue for the weekly human sample
-d) As a cost issue: fewer tokens would reduce the leak
+a) As an incident: a PII detector on every output with a threshold of zero, blocking the output and paging the on-call engineer
+b) As a trend: a weekly PII rate posted to the team channel, with an alert if it exceeds 5% of conversations
+c) As a quality issue: added to the weekly human review sample, so the HR team can score how often it happens
+d) As a cost issue: shorter document chunks mean fewer tokens and fewer chances to copy personal data
 
 ### Answer key and rationale (professor only)
 
 | Q | Answer | Why | Family |
 |---|---|---|---|
 | 1 | b | Same inputs, different behaviour in a segment; invisible to input drift; visible only with labels, by segment (the Session 7 demo). | Classical · concept drift |
-| 2 | b | The model's own decision hides the truth: a blocked payment produces no outcome, so false positives are never observed and recall is measured on a non-random subset. Only a random sample let through (or a manual review) reveals what the model hides. Late labels (d) are a real but different problem. | Classical · ground truth (selective labels) |
-| 3 | b | Rare event: accuracy is dominated by the majority class. The right A/B metric is fraud caught at a fixed false-positive rate. | Classical · performance |
-| 4 | a | The model's own outputs moved; no labels needed; the earliest warning after a deployment accident. | Classical · prediction drift |
+| 2 | d | The model's own decision hides the truth: a blocked payment produces no outcome, so whether it was fraud is never learned and recall is measured on a non-random subset. Only a random sample let through (or a manual review) reveals what the model hides. Late labels (b) are a real but different problem. | Classical · ground truth (selective labels) |
+| 3 | a | Rare event: accuracy is dominated by the majority class. The right A/B metric is fraud caught at a fixed false-positive rate. | Classical · performance |
+| 4 | c | The model's own outputs moved; no labels needed; the earliest warning after a deployment accident. | Classical · prediction drift |
 | 5 | c | Ranking intact (AUC fine), numbers not trustworthy: an overconfident model; calibration curve / Brier score. | Classical · performance |
-| 6 | b | The average hides the tail; a percentile requirement (p95 under 150 ms) is what "under 150 ms" must mean. | Classical · operational |
-| 7 | b | A confident statement unsupported by the (correct) source: hallucination; measured by a judge, confirmed by humans. | LLM · hallucination / groundedness |
+| 6 | a | The average hides the tail; a percentile requirement (p95 under 150 ms) is what "under 150 ms" must mean. | Classical · operational |
+| 7 | d | A confident statement unsupported by the (correct) source: hallucination; measured by a judge, confirmed by humans. | LLM · hallucination / groundedness |
 | 8 | b | Retrieval works; generation ignores the context and answers from memory: a groundedness failure against the new documents. | LLM · groundedness |
-| 9 | b | Cost drift caused by longer prompts and chunks shows up as tokens per request; conversations unchanged. | LLM · tokens and cost |
-| 10 | b | Personal data in an output is an incident, not a trend: severity incident, threshold zero, route = page the on-call engineer, action = block the output. The six parts of a rule from slide 21. | LLM · PII · routing an alert |
+| 9 | c | Cost drift caused by longer prompts and chunks shows up as tokens per request; conversations unchanged. | LLM · tokens and cost |
+| 10 | a | Personal data in an output is an incident, not a trend: severity incident, threshold zero, route = page the on-call engineer, action = block the output. The six parts of a rule from slide 21. | LLM · PII · routing an alert |
 
-**Scoring:** 1 point each; pass at 6/10 for the continuous-assessment component; the two most-missed questions are worth a two-minute recap at the start of Session 10 (usually Q2, Q5 and Q8).
+Answer letters are spread across the options (a ×3, b ×2, c ×3, d ×2) and correct answers are not systematically the longest, so the key cannot be guessed from the layout.
+
+**Scoring:** 1 point each; pass at 6/10 for the continuous-assessment component; the most-missed questions are worth a two-minute recap at the start of Session 10 (expect Q2, Q5 and Q8).
 
 ---
 

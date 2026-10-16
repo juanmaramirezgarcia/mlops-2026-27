@@ -49,3 +49,6 @@ sa-*.json
 
 # Forum evaluations with student names and grades: keep on this Mac only
 *Evaluation_and_Feedback*
+
+# Leftovers from files replaced while open (FUSE)
+.fuse_hidden*

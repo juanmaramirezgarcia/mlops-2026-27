@@ -1,6 +1,6 @@
-*churn-model v1.1 · monitoring run 01 Sep 15:49* — 5 alert(s)
+*churn-model v1.1 · monitoring run 13 Oct 15:28* — 5 alert(s)
 
-:warning: *drifted-features* — Actual value 3.000 >= 2.000 (threshold > 2 of 7 features)
+:warning: *drifted-features* — Actual value 2.000 >= 2.000 (threshold 2 or more of 6 features)
     → check the extract with the data team; if confirmed, retrain on recent data
     to: #churn-model-alerts (Slack), ML engineer
 

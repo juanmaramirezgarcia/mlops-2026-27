@@ -58,9 +58,9 @@ def main():
     rds = Dataset.from_pandas(ref.drop(columns=["churned"]), data_definition=d)
     cds = Dataset.from_pandas(cur.drop(columns=["churned"]), data_definition=d)
     report = Report([
-        DriftedColumnsCount(tests=[lte(2)]),                       # drifted-features: no more than 2 of 7
+        DriftedColumnsCount(columns=F, tests=[lt(2)]),             # drifted-features: fewer than 2 of the 6 model inputs
         MeanValue(column="monthly_charges", tests=[lte(70)]),      # charges-mean-shift
-        MissingValueCount(column="tenure_months", tests=[lte(0.05)]),  # missing-features
+        MissingValueCount(column="tenure_months", share_tests=[lte(0.05)]),  # missing-features: share, not count
         ValueDrift(column="prediction", tests=[lt(0.10)]),        # prediction-drift
     ])
     snap = report.run(cds, rds)
