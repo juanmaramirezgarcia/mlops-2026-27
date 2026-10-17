@@ -1,0 +1,25 @@
+# Session 5 · Demo 2 · From the registry to a container (about 4 minutes)
+# Terminal in the S05/demo folder, font 18 pt. Copy one line at a time.
+
+# 1. The box, built last night from the registry (models:/churn-model@production, version 1)
+docker images churn-model
+
+# 1b. (Optional) The recipe for the box: a slim Python, the model's exact libraries, the model, and MLflow's web server
+cat registry_box/Dockerfile
+
+# 2. Start it: one box, listening on port 5002
+docker run -d -p 5002:8080 --name churn-prod churn-model:production
+
+# 3. Is it running?
+docker ps
+
+# 4. Is it alive? (wait ~10 seconds after step 2; 200 = alive)
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:5002/ping
+
+# 5. Two customers arrive: a loyal one (60 months, 45 EUR, no tickets) and an at-risk one (3 months, 110 EUR, 5 tickets)
+cat customers.json
+curl -s -X POST http://127.0.0.1:5002/invocations -H "Content-Type: application/json" -d @customers.json
+#    -> {"predictions": [0, 1]}   0 = stays, 1 = likely to leave
+
+# 6. Stop it (rollback in one line: start the previous image instead)
+docker rm -f churn-prod

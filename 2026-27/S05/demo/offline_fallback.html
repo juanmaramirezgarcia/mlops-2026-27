@@ -1,0 +1,107 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Offline copy · GitHub Actions demo</title><style>
+body{font:18px/1.45 -apple-system,Segoe UI,Calibri,Arial,sans-serif;color:#1b2a4a;margin:0;background:#fff}
+header{background:#1b2a4a;color:#fff;padding:14px 32px;position:sticky;top:0;z-index:2} header b{font-size:20px} .note{color:#b8c4d6;font-size:14px}
+nav a{color:#fff;margin-right:18px;text-decoration:none;border-bottom:2px solid #0e7c86;font-size:16px;display:inline-block;margin-top:6px}
+section{padding:24px 32px 8px;max-width:1150px} h2{margin:0 0 12px;font-size:26px} h3{margin:14px 0 6px;font-size:18px}
+.run{display:flex;gap:14px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid #e5e7eb}
+.ic{width:22px;height:22px;border-radius:50%;flex:none;margin-top:3px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700}
+.ok{background:#1a7f37} .fail{background:#cf222e} .skip{background:#8c959f}
+.title{font-weight:600} .meta{color:#6b7280;font-size:15px}
+.branch{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;background:#ddf4ff;color:#0969da;border-radius:6px;padding:1px 7px}
+.box{border:1px solid #d0d7de;border-radius:8px;overflow:hidden;margin-bottom:16px}
+.step{display:flex;gap:12px;align-items:center;padding:9px 14px;border-top:1px solid #eaeef2} .step:first-child{border-top:0}
+.step.skipped{color:#8c959f}
+pre{background:#0d1117;color:#e6edf3;margin:0;padding:12px 16px;font:15px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap}
+pre .err{color:#ff7b72} pre .okc{color:#7ee787}
+.pr{border:1px solid #d0d7de;border-radius:8px;padding:16px 20px}
+.desc{background:#f6f8fa;border-radius:8px;padding:12px 16px;margin:10px 0;font-size:17px}
+.check{display:flex;gap:12px;align-items:center;border:1px solid #d0d7de;border-radius:8px;padding:12px 14px;margin-top:12px}
+.muted{color:#6b7280} .say{border-left:4px solid #0e7c86;padding:6px 14px;background:#eef6f7;margin:14px 0;font-size:17px}
+</style></head><body>
+<header><b>GitHub Actions · mlops-demo-churn</b> &nbsp;<span class="note">Offline copy of the Session 5 demo, rebuilt from the real pipeline output. Use only if GitHub is unreachable. Runs and times as on GitHub, 16 October.</span><br>
+<nav><a href="#runs">1 · All runs</a><a href="#green">2 · The green run</a><a href="#pr">3 · The pull request</a><a href="#red">4 · The red run's log</a><a href="#box">5 · Demo 2: registry → container</a></nav></header>
+
+<section id="runs"><h2>Actions · workflow <code>ci</code>: every push starts a run</h2>
+<div class="box">
+<div class="run"><div class="ic fail">✕</div><div><div class="title">Load the 12 October extract from the new supplier feed</div><div class="meta">ci #3 · commit 87f99c0 · <span class="branch">extract-2026-10-12</span> · 25 s · failed at "Validate data"</div></div></div>
+<div class="run"><div class="ic ok">✓</div><div><div class="title">Name the CI steps and add a data validation step</div><div class="meta">ci #2 · commit 6c42903 · <span class="branch">main</span> · 27 s · success</div></div></div>
+<div class="run"><div class="ic ok">✓</div><div><div class="title">Add CI: run the tests and a training dry-run on every push</div><div class="meta">ci #1 · commit 66cfb4f · <span class="branch">main</span> · 29 s · success · the run students looked at after Session 3</div></div></div>
+</div>
+<div class="say">"Every time someone pushed a change, a machine started, ran the pipeline and wrote down what happened. Nobody clicked 'run'."</div>
+</section>
+
+<section id="green"><h2>The green run on <span class="branch">main</span>: job <code>pipeline</code></h2>
+<div class="box">
+<div class="step"><div class="ic ok">✓</div>Set up job</div>
+<div class="step"><div class="ic ok">✓</div>Check out the code</div>
+<div class="step"><div class="ic ok">✓</div>Set up Python</div>
+<div class="step"><div class="ic ok">✓</div>Install dependencies</div>
+<div class="step"><div class="ic ok">✓</div><b>Tests on code</b></div>
+<pre>python -m pytest -q
+...                                                                      [100%]
+<span class="okc">3 passed</span></pre>
+<div class="step"><div class="ic ok">✓</div><b>Validate data</b></div>
+<pre>python src/check_data.py
+<span class="okc">Data validation passed: 10 rows, 7 columns, no missing columns, no mostly-empty features.</span></pre>
+<div class="step"><div class="ic ok">✓</div><b>Train and evaluate</b></div>
+<pre>python src/train.py
+Model trained on 10 customers</pre>
+<div class="step"><div class="ic ok">✓</div><b>Model card present</b></div>
+<pre>test -f MODEL_CARD.md &amp;&amp; grep -q "Owner" MODEL_CARD.md</pre>
+<div class="step"><div class="ic ok">✓</div>Complete job</div>
+</div>
+<div class="say">"Tests on code, validate data, train and evaluate, model card present. Every push, forever."</div>
+</section>
+
+<section id="pr"><h2>The pull request: "Weekly extract 12 October"</h2>
+<div class="pr">
+<div><b>Weekly extract 12 October #1</b> &nbsp;<span class="branch" style="background:#eaeef2;color:#57606a">Draft</span> <span class="muted">wants to merge 1 commit into <span class="branch">main</span> from <span class="branch">extract-2026-10-12</span></span></div>
+<div class="desc"><b>Load the 12 October extract from the new supplier feed</b><br>Automated weekly extract. NOTE: the supplier changed the customer schema; tenure_months is missing for most rows.</div>
+<div class="check"><div class="ic fail">✕</div><div><b>All checks have failed</b> · 2 failing checks <span class="muted">· not merged: main stays green</span></div></div>
+<div class="check"><div class="ic fail">✕</div><div><b>ci / pipeline</b> <span class="muted">(pull_request)</span> · Failing after 23s · <u>Details</u></div></div>
+<div class="check"><div class="ic fail">✕</div><div><b>ci / pipeline</b> <span class="muted">(push)</span> · Failing after 22s · <u>Details</u></div></div>
+</div>
+<div class="say">"The weekly extract arrives. Look at the check: red. The pipeline is refusing to let this data in."</div>
+</section>
+
+<section id="red"><h2>The red run's log: where it stopped</h2>
+<div class="box">
+<div class="step"><div class="ic ok">✓</div>Set up job</div>
+<div class="step"><div class="ic ok">✓</div>Check out the code</div>
+<div class="step"><div class="ic ok">✓</div>Set up Python</div>
+<div class="step"><div class="ic ok">✓</div>Install dependencies</div>
+<div class="step"><div class="ic ok">✓</div><b>Tests on code</b> <span class="muted">&nbsp;3 passed: the code is fine</span></div>
+<div class="step"><div class="ic fail">✕</div><b>Validate data</b></div>
+<pre>python src/check_data.py
+<span class="err">DATA VALIDATION FAILED: More than 5% empty values in: ['tenure_months'] ({'tenure_months': 0.7}). Check the upstream extract.</span>
+<span class="err">Error: Process completed with exit code 1.</span></pre>
+<div class="step skipped"><div class="ic skip">–</div>Train and evaluate <span class="muted">&nbsp;skipped</span></div>
+<div class="step skipped"><div class="ic skip">–</div>Model card present <span class="muted">&nbsp;skipped</span></div>
+<div class="step"><div class="ic ok">✓</div>Complete job</div>
+</div>
+<div class="say">"Seventy percent of one feature is empty. The steps after it never ran: nothing was trained, nothing was deployed, and there is a record of what was rejected and when. NorthRetail ran four months on that problem."</div>
+</section>
+
+<section id="box"><h2>Demo 2 · From the registry to a container (slide 16)</h2>
+<p class="muted">What the terminal shows when the box built from <code>models:/churn-model@production</code> (version 1) is started and asked about two customers.</p>
+<pre>$ docker images churn-model
+IMAGE                    ID             DISK USAGE
+churn-model:production   fcaf75e62e3e   891MB
+
+$ docker run -d -p 5002:8080 --name churn-prod churn-model:production
+(a long container id)
+
+$ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:5002/ping
+<span class="okc">200</span>
+
+$ cat customers.json
+{"dataframe_split": {"columns": ["tenure_months", "monthly_charges", "support_tickets"],
+                     "data": [[60, 45.0, 0], [3, 110.0, 5]]}}
+
+$ curl -s -X POST http://127.0.0.1:5002/invocations -H "Content-Type: application/json" -d @customers.json
+<span class="okc">{"predictions": [0, 1]}</span>
+
+$ docker rm -f churn-prod</pre>
+<div class="say">"Zero: the loyal customer stays. One: the at-risk customer is likely to leave. A prediction from the production model, through a network request, from a box that would run the same in a bank's cloud. This is what 'deployed' means."</div>
+</section>
+</body></html>

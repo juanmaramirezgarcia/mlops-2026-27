@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Session 5 Pipeline Demo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@1,400;1,500&display=swap">
+<style>
+/* Layout: sticky run-of-show bar on top, slide index on the left (desktop), one card per slide.
+   Tokens: navy ground for chrome, paper-white reading surface, each session block owns one hue. */
+:root{
+  --bg:#F6F7FA; --surface:#FFFFFF; --ink:#18223A; --muted:#5B6476; --line:#DCE1EA;
+  --chrome:#1B2A4A; --chrome-ink:#FFFFFF; --chrome-muted:#B8C4D6; --accent:#0E7C86; --tint:#EEF1F6;
+  --f-body:"IBM Plex Sans",-apple-system,"Segoe UI",Calibri,Arial,sans-serif;
+  --f-say:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --c-open:#3F5B91;--c-ci:#0E7C86;--c-test:#C8642A;--c-roll:#2F5FA8;--c-break:#7A8494;--c-scale:#6A4C9C;--c-act:#2E7D4F;--c-close:#55627C;--c-app:#7A8494;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1524; --surface:#172036; --ink:#E7ECF5; --muted:#A3AEC2; --line:#2A3550;
+  --chrome:#0A1020; --chrome-ink:#E7ECF5; --chrome-muted:#8E9BB4; --accent:#4FC3CC; --tint:#1D2840; --c-open:#9FB3DA;--c-ci:#4FC3CC;--c-test:#F0A06E;--c-roll:#7FA6E6;--c-break:#A9B1BE;--c-scale:#B79BE3;--c-act:#76C99A;--c-close:#AFC0DD;--c-app:#A9B1BE; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0F1524; --surface:#172036; --ink:#E7ECF5; --muted:#A3AEC2; --line:#2A3550;
+  --chrome:#0A1020; --chrome-ink:#E7ECF5; --chrome-muted:#8E9BB4; --accent:#4FC3CC; --tint:#1D2840; --c-open:#9FB3DA;--c-ci:#4FC3CC;--c-test:#F0A06E;--c-roll:#7FA6E6;--c-break:#A9B1BE;--c-scale:#B79BE3;--c-act:#76C99A;--c-close:#AFC0DD;--c-app:#A9B1BE; color-scheme:dark; }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+a{color:var(--accent)} a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--tint);padding:.08em .35em;border-radius:4px}
+code{overflow-wrap:anywhere}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--chrome);color:var(--chrome-ink);padding:12px 16px 10px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.top-inner{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.top-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.top h1{font-size:1.05rem;font-weight:600;letter-spacing:.01em}
+.top .sub{color:var(--chrome-muted);font-size:.85rem}
+.ros{display:flex;width:100%;height:30px;border-radius:6px;overflow:hidden;gap:2px}
+.ros a{flex-grow:var(--w);flex-basis:0;min-width:0;background:var(--c);color:#fff;text-decoration:none;font-size:.72rem;font-weight:600;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
+.ros a:hover{filter:brightness(1.12)} .ros a{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.ros-scale{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.68rem;color:var(--chrome-muted)}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px}
+.toc{position:sticky;top:120px;align-self:start;max-height:calc(100vh - 140px);overflow:auto;font-size:.84rem;padding-right:4px}
+.toc h2{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:14px 0 4px}
+.toc a{display:flex;gap:8px;align-items:baseline;color:var(--ink);text-decoration:none;padding:2px 6px;border-radius:5px}
+.toc a:hover{background:var(--tint)}
+.toc .n{font-family:var(--f-mono);font-size:.75rem;color:var(--c);min-width:1.6em;font-weight:500}
+main{min-width:0;display:flex;flex-direction:column;gap:28px}
+.intro{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;max-width:72ch}
+.intro p{margin:0}
+.block-head{display:flex;align-items:center;gap:12px;padding-top:8px;border-top:3px solid var(--c);scroll-margin-top:130px}
+.block-head h2{font-size:1.35rem;font-weight:700;color:var(--c)}
+.block-head .mins{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-left:auto;white-space:nowrap}
+.block-note{color:var(--muted);font-size:.95rem;margin:0;max-width:72ch}
+.cards{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:130px}
+.card-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.badge{flex:none;width:34px;height:34px;border-radius:8px;background:var(--c);color:#fff;font-family:var(--f-mono);font-weight:500;display:grid;place-items:center;font-size:.9rem}
+.card-head h3{font-size:1.05rem;font-weight:600;flex:1;min-width:0}
+.pill{flex:none;font-family:var(--f-mono);font-size:.74rem;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:start}
+.lab{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600;padding-top:.3em}
+.val{min-width:0;max-width:75ch}
+.val p{margin:0 0 .5em}
+.row.land .val{font-family:var(--f-say);font-style:italic;font-size:1.12rem;line-height:1.45;border-left:3px solid var(--c);padding:2px 0 2px 12px;color:var(--ink)}
+.row.ask .val{background:var(--tint);border-radius:8px;padding:6px 10px}
+.extra{border-top:1px dashed var(--line);padding-top:10px;min-width:0}
+.extra > *:first-child{margin-top:0}
+.extra p,.extra li{max-width:75ch}
+.extra ul,.extra ol{padding-left:1.3em;margin:.4em 0}
+.extra blockquote,.say{margin:.6em 0;background:var(--tint);border-left:3px solid var(--c);border-radius:0 8px 8px 0;padding:8px 12px;font-family:var(--f-say);font-style:italic}
+.extra blockquote p,.say p{margin:.2em 0}
+.tbl{overflow-x:auto;margin:.5em 0}
+table{border-collapse:collapse;font-size:.88rem;min-width:520px;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--tint);font-weight:600}
+td{font-variant-numeric:tabular-nums}
+.checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.checklist label{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;cursor:pointer}
+.checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.checklist input:checked + span{color:var(--muted);text-decoration:line-through}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:130px}
+.panel h2{font-size:1.15rem} .panel p{margin:0} .panel ul,.panel ol{margin:0;padding-left:1.3em}
+.eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
+@media (max-width:900px){ .wrap{grid-template-columns:minmax(0,1fr)} .toc{display:none} .ros a{font-size:0;padding:0} }
+@media (max-width:560px){ .row{grid-template-columns:minmax(0,1fr);gap:2px} .card-head{flex-wrap:wrap} body{font-size:15px} }
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+details.card summary{cursor:pointer;list-style:none} details.card summary::-webkit-details-marker{display:none}
+details.card{border-style:dashed} details.card[open] summary{border-bottom:1px solid var(--line)} details.card:not([open]) summary{border-bottom:0}
+.card-body .extra p{margin:.4em 0}</style></head><body>
+<div hidden id="store" data-k="s05-demo"></div><header class="top"><div class="top-inner">
+  <div class="top-row"><h1>Session 5 · Demo scripts</h1><span class="sub">Demo 1 · GitHub Actions, slide 11 · Demo 2 · registry → container, slide 16</span></div>
+  <nav class="ros" aria-label="Demo timeline"><a href="#d2step1" style="--c:var(--c-ci);--w:1" title="All runs · ≈ 1 min">All runs</a><a href="#d2step2" style="--c:var(--c-act);--w:1.5" title="Green run · ≈ 1.5 min">Green run</a><a href="#d2step3" style="--c:var(--c-roll);--w:1" title="Pull request · ≈ 1 min">Pull request</a><a href="#d2step4" style="--c:var(--c-test);--w:1.5" title="Red run log · ≈ 1.5 min">Red run log</a><a href="#d2step6" style="--c:var(--c-open);--w:0.5" title="Back · ≈ 0.5 min">Back</a><a href="#d3step1" style="--c:var(--c-close);--w:4" title="Demo 2 · container · ≈ 4 min">Demo 2 · container</a></nav>
+  <div class="ros-scale" aria-hidden="true"><span>Demo 1</span><span></span><span></span><span>Demo 2</span><span></span></div>
+</div></header>
+<div class="wrap">
+  <nav class="toc" aria-label="Sections"><a href="#d1" style="--c:var(--accent)"><span class="n">1</span>Preparation (10 minutes, a few days before)</a><h2>2. The six minutes, click by click</h2><a href="#d2step1" style="--c:var(--c-ci)"><span class="n">1</span>Tab 1 · The list of runs</a><a href="#d2step2" style="--c:var(--c-act)"><span class="n">2</span>Tab 2 · The green run</a><a href="#d2step3" style="--c:var(--c-roll)"><span class="n">3</span>Tab 3 · The pull request</a><a href="#d2step4" style="--c:var(--c-test)"><span class="n">4</span>Tab 4 · The red run's log</a><a href="#d2step5" style="--c:var(--c-scale)"><span class="n">+</span>Optional · Push a change live</a><a href="#d2step6" style="--c:var(--c-open)"><span class="n">5</span>Back to the slide</a><h2>3. Demo 2 · From the registry to a container, click by click</h2><a href="#d3step1" style="--c:var(--c-close)"><span class="n">1</span>Where it comes from</a><a href="#d3step2" style="--c:var(--c-close)"><span class="n">2</span>Start it</a><a href="#d3step3" style="--c:var(--c-close)"><span class="n">3</span>Send it two customers</a><a href="#d3step4" style="--c:var(--c-close)"><span class="n">4</span>Stop it, and the rollback line</a><a href="#d3step5" style="--c:var(--c-test)"><span class="n">5</span>Option: Talend API Tester instead of curl (cards 3 and 4)</a><a href="#d3step6" style="--c:var(--c-break)"><span class="n">6</span>If it fails</a><a href="#d4" style="--c:var(--accent)"><span class="n">4</span>If something goes wrong (Demo 1)</a><a href="#d5" style="--c:var(--accent)"><span class="n">5</span>Optional: the container deploy lab (self-paced)</a><a href="#d6" style="--c:var(--accent)"><span class="n">6</span>Checklist</a></nav>
+  <main><div class="intro"><p><strong>Slot:</strong> minutes 19–26 (slide 11 "What a pipeline run looks like", then slide 12 "What you just saw")</p><p><strong>Duration:</strong> 6 minutes, browser only; one optional live push</p><p><strong>Repository:</strong> <code>https://github.com/juanmaramirezgarcia/mlops-demo-churn</code> (the Session 1 repository)</p><p><strong>Preparation:</strong> <code>demo/prepare_s5_demo.sh</code>, run once a few days before the session (dry-run tested on 16 October: green on <code>main</code>, red on the branch at "Validate data")</p><p><strong>Offline fallback:</strong> <code>demo/offline_fallback.html</code> (the four views, rebuilt from the real pipeline output)</p></div><section class="panel" id="d1"><h2>1. Preparation (10 minutes, a few days before)</h2><p>The repository already has a CI workflow (the "green tick" students were asked to look at). The preparation script makes two changes so the Actions page reads like the slide, and creates the red run.</p>
+<p>In Terminal, inside your local clone of the repository:</p>
+<p><code>bash
+cd "/Users/juanramirez/Documents/JM new/MLOps Rev2026/2026-27/S01/demo/mlops-demo-churn"
+bash "../../../S05/demo/prepare_s5_demo.sh"</code></p>
+<p>What it does:</p>
+<ol>
+<li>Renames the CI steps so they appear on GitHub as <strong>Tests on code → Validate data → Train and evaluate → Model card present</strong>, and adds <code>src/check_data.py</code>, which runs the Session 1 validation rules on the training extract and fails the pipeline if they do not pass. Commits and pushes to <code>main</code>: a <strong>green run</strong> appears within a minute or two.</li>
+<li>Creates a branch <code>extract-2026-10-12</code> in which <code>data/churn_sample.csv</code> has <code>tenure_months</code> empty for 70% of customers (the NorthRetail bug, again) with a commit message that reads like an automated extract. Pushes it: a <strong>red run</strong> appears, failing at "Validate data". <code>main</code> is untouched.</li>
+</ol>
+<p>Then, on GitHub, open a pull request for the branch using the link the script prints (title it "Weekly extract 12 October"), <strong>do not merge it</strong>, and click <strong>Convert to draft</strong> so it cannot be merged by accident. (Done 16 October: pull request #1, draft, two failing checks.) The pull request page shows the red check next to the description, which is the most natural place to click during the demo.</p>
+<p>Check the four URLs open, and bookmark them in this order:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 · All runs</td>
+<td><code>https://github.com/juanmaramirezgarcia/mlops-demo-churn/actions</code></td>
+</tr>
+<tr>
+<td>2 · The green run</td>
+<td>click the latest run on <code>main</code> ("Name the CI steps and add a data validation step")</td>
+</tr>
+<tr>
+<td>3 · The pull request</td>
+<td><code>https://github.com/juanmaramirezgarcia/mlops-demo-churn/pulls</code> → "Weekly extract 12 October"</td>
+</tr>
+<tr>
+<td>4 · The red run's log</td>
+<td>from the pull request, <strong>Checks</strong> → <code>ci</code> → the step "Validate data"</td>
+</tr>
+</tbody>
+</table></div>
+<p>Zoom the browser to 125–150%. <strong>Be signed in to GitHub in that browser:</strong> the step-by-step logs of a run are only shown to signed-in users, even on a public repository. Tested: on <code>main</code> all four steps pass; on the branch the pipeline stops at "Validate data" with the message <code>DATA VALIDATION FAILED: More than 5% empty values in: ['tenure_months'] ({'tenure_months': 0.7})</code>.</p></section><section class="cards" id="d2" style="--c:var(--c-test)"><div class="block-head"><h2>2. The six minutes, click by click</h2><span class="mins">minutes 19–26 · slide 11 → 12</span></div><article class="card" id="d2step1" style="--c:var(--c-ci)"><div class="card-head"><span class="badge">1</span><h3>Tab 1 · The list of runs</h3><span class="pill">≈ 1 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><blockquote class="say">
+<p>"This is the Actions page: every time someone pushed a change to the repository, a machine somewhere started, ran the pipeline, and wrote down what happened. Green tick: everything passed. Red cross: something stopped it. Two weeks ago you saw the commits; these are the runs the commits triggered. Nobody clicked 'run'."</p>
+</blockquote>
+<p>Point at the workflow name <code>ci</code> and at the two most recent runs: one green on <code>main</code>, one red on the branch.</p></div></div></article><article class="card" id="d2step2" style="--c:var(--c-act)"><div class="card-head"><span class="badge">2</span><h3>Tab 2 · The green run</h3><span class="pill">≈ 1.5 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Open the run on <code>main</code>. The job <code>pipeline</code> shows the steps with times.</p>
+<blockquote class="say">
+<p>"Read the steps. Check out the code, set up Python, install the exact libraries. Then the four that matter: <strong>tests on code</strong>, the validation rules behave as specified; <strong>validate data</strong>, the training extract passes the checks; <strong>train and evaluate</strong>, the model trains end to end; <strong>model card present</strong>, an owner is written down. About twenty-five seconds. Every push, forever."</p>
+</blockquote>
+<p>Click <strong>Validate data</strong> to expand it: one line, "Data validation passed: 10 rows, 7 columns…". "This is the test pyramid's middle layer, running."</p></div></div></article><article class="card" id="d2step3" style="--c:var(--c-roll)"><div class="card-head"><span class="badge">3</span><h3>Tab 3 · The pull request</h3><span class="pill">≈ 1 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><blockquote class="say">
+<p>"Now a different day. The weekly extract arrives from the supplier; an automated job proposes it to the repository as a pull request. Look at the description: 'the supplier changed the customer schema'. And look at the check: red."</p>
+</blockquote>
+<p>Point at the red ✗ next to <code>ci</code>. "The pipeline is refusing to let this data in. Let's see why." (If someone asks about the grey <strong>Draft</strong> label: "I locked it so nobody can merge it by accident; in a real team the failing check alone would block the merge.")</p></div></div></article><article class="card" id="d2step4" style="--c:var(--c-test)"><div class="card-head"><span class="badge">4</span><h3>Tab 4 · The red run's log</h3><span class="pill">≈ 1.5 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Click <strong>Details</strong> → the run → expand <strong>Validate data</strong>.</p>
+<blockquote class="say">
+<p>"<code>DATA VALIDATION FAILED: More than 5% empty values in tenure_months, 0.7</code>. Seventy percent of one feature is empty. The steps after it never ran: nothing was trained, nothing was deployed, and there is a record of exactly what was rejected and when. Compare with NorthRetail, where the same problem ran for four months. The difference is one step in a pipeline."</p>
+</blockquote>
+<p>Point at the greyed-out steps below: "Train and evaluate: skipped. Model card: skipped."</p></div></div></article><details class="card" id="d2step5" style="--c:var(--c-scale)"><summary class="card-head"><span class="badge">+</span><h3>Optional · Push a change live</h3><span class="pill">≈ 1 min, only if ahead of time</span></summary><div class="card-body"><div class="extra" style="border:0;padding:0"><p>In Terminal, in the repository folder, a one-line change and a push:</p>
+<p><code>bash
+echo "" &gt;&gt; MODEL_CARD.md &amp;&amp; git commit -qam "Touch the model card (live in Session 5)" &amp;&amp; git push -q</code></p>
+<p>Switch to Tab 1 and refresh: a yellow dot appears, the run is queued. "By the time we finish the next slide it will be green or red. That is what continuous means." Check it again after slide 13.</p></div></div></details><article class="card" id="d2step6" style="--c:var(--c-open)"><div class="card-head"><span class="badge">5</span><h3>Back to the slide</h3><span class="pill">≈ 30 s</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><blockquote class="say">
+<p>"Three things: it ran by itself; it stopped at the data test, before anything was trained; and it left a record. The pipeline decided the change was safe, or not. Next: what exactly gets shipped when it says yes, and how it reaches customers."</p>
+</blockquote>
+<p>Switch to slide 12, "What you just saw".</p></div></div></article></section><section class="cards" id="d3" style="--c:var(--c-close)"><div class="block-head"><h2>3. Demo 2 · From the registry to a container, click by click</h2><span class="mins">≈ 4 min · slide 16, poll open meanwhile</span></div><div class="panel"><p><strong>Slot:</strong> slide 16 ("Demo: from the registry to a live endpoint, in four steps"), right after the container explanation on slide 15. Launch the chat poll on slide 15 and leave it open while you do the demo; read two answers at the end. About 4 minutes. Point to the slide's four cards as you go: registry, Dockerfile, container running, two customers.</p>
+<p><strong>What it shows:</strong> the model that the Session 3 registry calls <strong>production</strong> (<code>churn-model</code>, version 1), copied out of the registry and packed into a container last night, started live, and answering two customers. The last mile students have not seen yet: from a registry entry to a running service waiting for requests.</p>
+<p><strong>Files:</strong> <code>S05/demo/build_registry_container.command</code> (run once, the night before), <code>S05/demo/class_commands.txt</code> (the commands to copy in class), <code>S05/demo/customers.json</code> (two customers).</p>
+<p><strong>The night before (10 minutes):</strong> open Rancher Desktop and wait until it says Ready (engine: <strong>dockerd (moby)</strong>, in Preferences → Container Engine). Then double-click <code>build_registry_container.command</code>. It asks the registry which version is <code>production</code>, copies that model into <code>S05/demo/registry_box/model</code>, writes an eight-line recipe (<code>registry_box/Dockerfile</code>: a slim Python, the model's exact libraries, the model, MLflow's web server) and builds the image <code>churn-model:production</code> (3–6 minutes the first time), then starts it once, checks it answers, and stops it. (It builds natively for Apple-silicon Macs; MLflow's own <code>build-docker</code> forces an Intel image that crashes there.) Expected last lines: <code>ping : HTTP 200</code> and <code>prediction : {"predictions": [0, 1]}</code>.</p>
+<p><strong>Before class:</strong> Rancher Desktop running; a Terminal window in <code>S05/demo</code> at 18 pt, cleared; <code>class_commands.txt</code> open next to it. Optional: the MLflow UI from Session 3 (<code>S03/demo/mlflow/start_mlflow_ui.command</code>) on <strong>Models → churn-model</strong>, to show where the box came from.</p></div><article class="card" id="d3step1" style="--c:var(--c-close)"><div class="card-head"><span class="badge">1</span><h3>Where it comes from</h3><span class="pill">≈ 30 s</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>If the MLflow UI is open, show <strong>Models → churn-model</strong>: version 1 carries the alias <strong>production</strong>. Otherwise say it.</p>
+<blockquote class="say">
+<p>"Last week you saw this registry: version 1 is the one called 'production'. Last night I copied exactly that version out of the registry and packed it into a box. The recipe is eight lines: a slim Python, the model's exact libraries, the model, and MLflow's web server." (Optional: <code>cat registry_box/Dockerfile</code> to show it.)</p>
+</blockquote>
+<p>Type <code>docker images churn-model</code>: one line, <code>churn-model:production</code>, 891 MB.</p>
+<blockquote class="say">
+<p>"That is the box. It's sitting on my laptop, switched off."</p>
+</blockquote></div></div></article><article class="card" id="d3step2" style="--c:var(--c-close)"><div class="card-head"><span class="badge">2</span><h3>Start it</h3><span class="pill">≈ 1 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Type <code>docker run -d -p 5002:8080 --name churn-prod churn-model:production</code>, then <code>docker ps</code>.</p>
+<blockquote class="say">
+<p>"Now it's running: a little server, inside the box, waiting for customers on door number 5002. It doesn't know about my laptop; it carries everything it needs."</p>
+</blockquote>
+<p>Wait about ten seconds (talk), then <code>curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:5002/ping</code> → <strong>200</strong>.</p>
+<blockquote class="say">
+<p>"200 is the web's way of saying 'I'm alive'. It's the same question a load balancer asks every few seconds; you'll meet load balancers after the break."</p>
+</blockquote></div></div></article><article class="card" id="d3step3" style="--c:var(--c-close)"><div class="card-head"><span class="badge">3</span><h3>Send it two customers</h3><span class="pill">≈ 1.5 min</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Type <code>cat customers.json</code>: two customers, a loyal one (60 months, €45 a month, no complaints) and an at-risk one (3 months, €110, five support tickets). Then the request:</p>
+<p><code>curl -s -X POST http://127.0.0.1:5002/invocations -H "Content-Type: application/json" -d @customers.json</code></p>
+<p>Answer: <strong><code>{"predictions": [0, 1]}</code></strong>.</p>
+<blockquote class="say">
+<p>"Zero: the loyal customer stays. One: the at-risk customer is likely to leave, so the retention team should call. That's a prediction from the production model, through a network request, from a box that would run the same in a bank's cloud. This is what 'deployed' means."</p>
+</blockquote></div></div></article><article class="card" id="d3step4" style="--c:var(--c-close)"><div class="card-head"><span class="badge">4</span><h3>Stop it, and the rollback line</h3><span class="pill">≈ 30 s</span></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Type <code>docker rm -f churn-prod</code>.</p>
+<blockquote class="say">
+<p>"Gone. And rollback, from the next block, is exactly this: stop this box, start the previous version's box. Because the box holds everything, the previous version runs exactly as it did."</p>
+</blockquote>
+<p>Then read two answers from the chat poll.</p></div></div></article><article class="card" id="d3step5" style="--c:var(--c-test)"><div class="card-head"><span class="badge">5</span><h3>Option: Talend API Tester instead of curl (cards 3 and 4)</h3></div><div class="card-body"><div class="extra" style="border:0;padding:0"><p>Start the box in Terminal as above, then in Talend (project <strong>MLOps</strong>): <strong>1 · ping</strong>, <code>GET http://127.0.0.1:5002/ping</code> → <strong>200 OK</strong> (the body is empty on purpose; set the body view to <em>raw</em> so Talend does not show a JSON error). <strong>2 · two customers</strong>, <code>POST http://127.0.0.1:5002/invocations</code>, header <code>Content-Type: application/json</code>, body = the contents of <code>customers.json</code> → <strong>200</strong>, <code>{"predictions": [0, 1]}</code>. Optional <strong>3 · missing column</strong> (the same body without <code>support_tickets</code>) → <strong>400</strong>, "Failed to enforce schema". Stop the box in Terminal with <code>docker rm -f churn-prod</code>.</p></div></div></article><article class="card" id="d3step6" style="--c:var(--c-break)"><div class="card-head"><span class="badge">6</span><h3>If it fails</h3></div><div class="card-body"><div class="extra" style="border:0;padding:0"><ul>
+<li><code>docker: command not found</code> or "Cannot connect to the Docker daemon": Rancher Desktop is not running, or its engine is containerd. Skip the demo and say the lines over slide 16 (its four cards tell the story); the offline page (<code>demo/offline_fallback.html</code>, section 5) shows the same screens.</li>
+<li><code>ping</code> returns <code>000</code>: the server is still starting; wait five seconds and repeat.</li>
+<li>Port 5002 busy: use <code>-p 5003:8080</code> and <code>5003</code> in the two <code>curl</code> lines.</li>
+</ul></div></div></article></section><section class="panel" id="d4"><h2>4. If something goes wrong (Demo 1)</h2><div class="tbl"><table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Do this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The runs are not there</td>
+<td>The preparation script did not push (permission or network). Re-run it; it is safe to run twice. Check that the personal access token still has the <code>workflow</code> scope (Session 1): pushing a change to <code>.github/workflows/</code> needs it.</td>
+</tr>
+<tr>
+<td>The red run is green</td>
+<td>GitHub ran an older workflow file. Open the branch's run and check the step names; if they are the old ones, re-run the preparation script.</td>
+</tr>
+<tr>
+<td>Runs are queued and not starting</td>
+<td>GitHub Actions can lag a few minutes at busy times. Do the demo from the existing runs; skip the live push.</td>
+</tr>
+<tr>
+<td>No internet, or GitHub is down</td>
+<td>Open <code>demo/offline_fallback.html</code> in the browser: the runs list, the green run's steps, the pull request and the red run's "Validate data" log, with links at the top in the same order as the demo. Read the same script.</td>
+</tr>
+<tr>
+<td>A student asks "who pays for the machine?"</td>
+<td>"GitHub, for public repositories; a few euros a month for private ones; your own servers in a bank."</td>
+</tr>
+<tr>
+<td>A student asks to see the workflow file</td>
+<td>It is the appendix slide "A CI workflow file is the pipeline written down". Show that rather than the raw file.</td>
+</tr>
+</tbody>
+</table></div></section><section class="panel" id="d5"><h2>5. Optional: the container deploy lab (self-paced)</h2><p>Demo 2 above shows a registry model running in a container. Separately, <code>S05/deploy_lab/</code> is a self-paced hands-on that packages a model as a FastAPI service, containerises it, runs it locally (<code>docker build</code> / <code>docker run</code>), and deploys it to Google Cloud Run — the modernised version of last year's "Conda – Docker – GCP" walkthrough. It has no cost to the 90-minute timing; point students to it, or record a ~6-minute clip. It also carries <code>pipeline.yml</code> — the <strong>complete</strong> pipeline automated end to end (a trigger runs test → train → build → deploy to Cloud Run, plus a weekly schedule for continuous training), the modern equivalent of last year's Jenkins trigger demo. Full instructions: <code>MLOps_S05_Deploy_Lab_Guide.md</code>. The deck's appendix slides 37–38 (package and deploy) and 39–40 (the complete pipeline in one file; orchestration in one slide) reference it.</p></section><section class="panel" id="d6"><div class="eyebrow">Before class</div><h2>6. Checklist</h2><ul class="checklist"><li><label for="d-1"><input type="checkbox" id="d-1"><span><code>prepare_s5_demo.sh</code> run; green run on <code>main</code>, red run on <code>extract-2026-10-12</code></span></label></li><li><label for="d-2"><input type="checkbox" id="d-2"><span>Pull request "Weekly extract 12 October" opened and <strong>not merged</strong></span></label></li><li><label for="d-3"><input type="checkbox" id="d-3"><span>Demo 2: <code>build_registry_container.command</code> run the night before (ends with <code>HTTP 200</code> and <code>[0, 1]</code>); Rancher Desktop running before class; Terminal in <code>S05/demo</code> at 18 pt; <code>class_commands.txt</code> open</span></label></li><li><label for="d-4"><input type="checkbox" id="d-4"><span>Four tabs bookmarked in click order; "Validate data" step expanded once in each run</span></label></li><li><label for="d-5"><input type="checkbox" id="d-5"><span><code>demo/offline_fallback.html</code> opened once (the offline fallback)</span></label></li><li><label for="d-6"><input type="checkbox" id="d-6"><span>Signed in to GitHub in the demo browser (logs need it); zoom at 125–150%; notifications off</span></label></li><li><label for="d-7"><input type="checkbox" id="d-7"><span>After the term, optionally close the pull request and delete the branch (or keep them as a teaching artefact)</span></label></li></ul></section></main>
+</div><script>
+(function(){
+  var key='s05-demo';
+  var saved={}; try{ saved=JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){}
+  document.querySelectorAll('.checklist input[type=checkbox]').forEach(function(cb){
+    if(saved[cb.id]!==undefined) cb.checked=saved[cb.id];
+    cb.addEventListener('change',function(){ saved[cb.id]=cb.checked; try{ localStorage.setItem(key,JSON.stringify(saved)); }catch(e){} });
+  });
+})();
+</script></body></html>

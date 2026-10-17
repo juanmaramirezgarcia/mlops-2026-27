@@ -120,5 +120,5 @@ Leave `DEPLOY_ENABLED` unset and the pipeline is still a complete, safe CI+CT de
 - [ ] `run_local.command` runs clean on your Mac (Docker Desktop up): build succeeds, `/predict` returns ~0.88 for the high-risk example
 - [ ] `gcloud run deploy --source .` tested once against a real project (or the commands read and understood)
 - [ ] Decide: leave as an optional student lab, or record a ~6-minute clip for the campus
-- [ ] Lab folder present under `S05/deploy_lab/`; appendix slides 36–37 (package/deploy) and 39–40 (complete pipeline, orchestration) point to it
+- [ ] Lab folder present under `S05/deploy_lab/`; appendix slides 37–38 (package/deploy) and 40–41 (complete pipeline, orchestration) point to it
 - [ ] `pytest -q test_api.py` passes locally (4 tests); `pipeline.yml` reviewed; decide whether to wire the GCP secret for a live deploy
